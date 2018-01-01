@@ -25,38 +25,40 @@
       {{ content }}
 
       <footer class="site-footer">
-        <span class="site-social-media">
-          {% if site.twitter_username %}
-            <a href="https://twitter.com/{{ site.twitter_username }}" style="padding:10px 20px">
-              <i class="fa fa-twitter"></i> Twitter
-            </a>
-          {% endif %}
-          
-          {% if site.github_username %}
-            <a href="https://github.com/{{ site.github_username }}" style="padding:10px 20px">
-              <i class="fa fa-github"></i> GitHub
-            </a>
-          {% endif %}
+        <div style="text-align: center">
+          <span class="site-social-media">
+            {% if site.twitter_username %}
+              <a href="https://twitter.com/{{ site.twitter_username }}" style="padding:10px 20px">
+                <i class="fa fa-twitter"></i> Twitter
+              </a>
+            {% endif %}
+            
+            {% if site.github_username %}
+              <a href="https://github.com/{{ site.github_username }}" style="padding:10px 20px">
+                <i class="fa fa-github"></i> GitHub
+              </a>
+            {% endif %}
 
-          {% if site.linkedin_username %}
-            <a href="https://linkedin.com/in/{{ site.linkedin_username }}" style="padding:10px 20px">
-              <i class="fa fa-linkedin"></i> LinkedIn
-            </a>
-          {% endif %}
+            {% if site.linkedin_username %}
+              <a href="https://linkedin.com/in/{{ site.linkedin_username }}" style="padding:10px 20px">
+                <i class="fa fa-linkedin"></i> LinkedIn
+              </a>
+            {% endif %}
 
-          {% if site.facebook_username %}
-            <a href="https://www.facebook.com/{{ site.facebook_username }}" style="padding:10px 20px">
-              <i class="fa fa-facebook"></i> Facebook
-            </a>
-          {% endif %}
+            {% if site.facebook_username %}
+              <a href="https://www.facebook.com/{{ site.facebook_username }}" style="padding:10px 20px">
+                <i class="fa fa-facebook"></i> Facebook
+              </a>
+            {% endif %}
 
-          {% if site.instagram_username %}
-            <a href="https://www.instagram.com/{{ site.instagram_username }}" style="padding:10px 20px">
-              <i class="fa fa-instagram"></i> Instagram
-            </a>
-          {% endif %}
-        </span>
-        <br><br><br>
+            {% if site.instagram_username %}
+              <a href="https://www.instagram.com/{{ site.instagram_username }}" style="padding:10px 20px">
+                <i class="fa fa-instagram"></i> Instagram
+              </a>
+            {% endif %}
+          </span>
+          <br><br><br>
+        </div>
 
 
         {% if site.github.is_project_page %}
