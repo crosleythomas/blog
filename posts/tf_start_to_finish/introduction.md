@@ -45,7 +45,10 @@ Now that you understand every step of the process, let's review and show how to 
 
 ### * [Part 8 -- Furthur Reading and References](references)
 Links to articles I've found most useful, TensorFlow documentation, video guides, etc.
-
+<br>
+You can find all the associated templates <a href="https://github.com/crosleythomas/tensorplates" target="_blank">here</a>.
+<button onclick="location.href='https://github.com/crosleythomas/tensorplates'" class='continue-links' target="_blank">TensorPlates Templates Project</button>
+	
 <hr>
 <div style='text-align: center'><b>Thank you for reading!  Comments and questions are appreciated <a href="https://github.com/crosleythomas/blog/issues">here</a>.</b></div>
 <hr>

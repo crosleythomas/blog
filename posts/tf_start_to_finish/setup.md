@@ -54,11 +54,16 @@ In general, the following hardware setups are roughly ordered both in their bene
 4. Your Organization's GPU Only Machines
 5. <b>Best:</b> Distributed GPUs on a cloud service (Google Cloud, AWS, Azure)
 
-Note that TensorFlow only supports NVIDIA GPUs
+Note that TensorFlow only supports NVIDIA GPUs.
 
 <span class='protip'><b>Pro tip:</b> if buying a decent desktop with a good GPU (NVIDIA GeForce GTX 1060-1080) is close to within your budget, do it now.  You are going to do it eventually and you don't want to give up on machine learning because you got frustrated with your lack of computing power.</span>
 
-Having some, any, kind of GPU will help every deep learning project you do immensely.  For example, doing < task > on a CPU would take < time > but on a GPU it would only take < time >.  That's the difference between trying out a new project one night and seeing it work and running the same project, checking back in two days, forgetting what parameters you used, getting frustrated, and giving up.
+Having some, any, kind of GPU will help every deep learning project you do immensely.  [This benchmarking article](http://hn.premii.com/#/article/15940724) does a really nice job of comparing both the speed and cost of CPUs and different GPUs.  
+
+Check out the article for a detailed breakdown but here is the best diagram for understanding how much GPUs help.
+![Benchmarking](images/benchmarking_cnn_for_mnist.png)
+
+That's the difference between trying out a new project one night and seeing it work and running the same project, checking back in two days, forgetting what parameters you used, getting frustrated, and giving up.
 
 Or, for another way of looking at this, enjoy Adam and Jamie from Mythbusters explain the power of GPUs. (Interesting to note this was made in 2009 and sponsored by NVIDIA.)
 
@@ -154,6 +159,7 @@ In Part 2 we will see how to prepare a dataset in TensorFlow's TFRecord format.
 <hr>
 
 <div style="text-align: center;">
+	<button onclick="location.href='introduction'" class='continue-links'>Introduction</button>
 	<button onclick="location.href='setup'" class='continue-links'>Part 1: Setup</button>
 	<button onclick="location.href='dataprep'" class='continue-links'>Part 2: Preparing Data</button>
 	<button onclick="location.href='dataload'" class='continue-links'>Part 3: Consuming Data</button>
