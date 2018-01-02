@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+  <head>
+    <meta charset="UTF-8">
+
+<!-- Begin Jekyll SEO tag v2.3.0 -->
+<title>TensorFlow Environment Setup | blog</title>
+<meta property="og:title" content="TensorFlow Environment Setup" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="http://localhost:4000/posts/tf_start_to_finish/setup.html" />
+<meta property="og:url" content="http://localhost:4000/posts/tf_start_to_finish/setup.html" />
+<meta property="og:site_name" content="blog" />
+<script type="application/ld+json">
+{"name":null,"description":null,"url":"http://localhost:4000/posts/tf_start_to_finish/setup.html","headline":"TensorFlow Environment Setup","dateModified":null,"datePublished":null,"sameAs":null,"@type":"WebPage","author":null,"image":null,"publisher":null,"mainEntityOfPage":null,"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/assets/css/style.css?v=4a6cb11caf3fc568d91e45d3e747880b225cb4d1">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name"><a href='/' style="color:white; text-decoration:none">TensorBits</a></h1>
+      <h2 class="project-tagline"></h2>
+      
+    </section>
+
+    <section class="main-content">
+      <h1 id="part-1-environment-setup">Part 1: Environment Setup</h1>
+
+<h2 id="tldr">tl;dr</h2>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Make sure you have virtualenv
+pip install virtualenv
+
+# Create an environment for TensorFlow development
+virtualenv env --python=python3
+
+# Start the environment
+source env/bin/activate
+
+# Install TensorFlow
+pip3 install tensorflow-gpu # with GPU -- additional setup steps need to be taken for GPU support (coming soon).
+pip3 install tensorflow # without GPU
+
+# Install Jupyter
+pip3 install jupyter
+
+# Create a project
+mkdir my_new_project
+cd my_new_project
+
+# Start jupyter
+jupyter notebook
+
+# Create a new notebook
+# New (button) --&gt; Python [env]
+
+</code></pre></div></div>
+
+<h2 id="machine">Machine</h2>
+
+<h2 id="virtual-environments">Virtual Environments</h2>
+<p><a href="">virtualenv</a></p>
+
+<h2 id="installing-tensorflow">Installing TensorFlow</h2>
+
+<h5 id="cpu-version">CPU Version</h5>
+
+<h5 id="gpu-version">GPU Version</h5>
+
+<h2 id="jupyter-notebooks">Jupyter Notebooks</h2>
+<p>If you aren’t using <a href="http://jupyter.org/">Jupyter Notebooks</a> yet, start now.  I put off making the switch for far too long and research has gotten immeasurably since I did.  “The Jupyter Notebook is an open-source web application that allows you to create and share documents that contain live code, equations, visualizations and narrative text.” - jupyter.org<br /></p>
+
+<p>Jupyter is a program you run locally that pops open a tab in your web browser that looks like this…
+<img src="images/jupyterpreview.png" alt="Jupyter Preview" /></p>
+
+<p>It is the perfect environment for prototyping in machine learning and data science.  You can test out snippets of code, visualize images (such as your dataset to make sure you are loading it correctly), run training, etc.</p>
+
+<p><span class="protip"><b>Protip:</b> If you will eventually run the training on a server, prototype using Jupyter and then export the .ipynb notebook file as a .py with File –&gt; Download as –&gt; Python (.py) from inside the notebook.
+</span>
+<br /><br />
+<img src="images/exporting_notebook.png" alt="Exporting Notebook" /></p>
+
+<p><span class="sidenote"><b>Sidenote:</b> Google has something now called <a href="https://colab.research.google.com/">Collaboratory</a> which takes Jupyter Notebooks and integrates them with Google Drive.  Collaboratory picks up a lot of the features from Google Docs such as saving in Drive, sharing a file with otheres who can live edit/run, and leave comments/feedback like you would any other Google Docs file.  I’m just starting to use these but think they are really exciting for projects with a lot of informal collaboration.</span>
+<br /><br />
+<img src="images/collaboratory.png" alt="Collaboratory Preview" /></p>
+
+<hr />
+
+<h2 id="continue-reading">Continue Reading</h2>
+
+<p><button onclick="location.href='dataprep'" class="continue-links">Continue to Part 2</button>
+In Part 2 we will see how to prepare a dataset in TensorFlow’s TFRecord format.</p>
+
+<hr />
+
+<div style="text-align: center;">
+	<button onclick="location.href='setup'" class="continue-links">Part 1: Setup</button>
+	<button onclick="location.href='dataprep'" class="continue-links">Part 2: Preparing Data</button>
+	<button onclick="location.href='dataload'" class="continue-links">Part 3: Consuming Data</button>
+	<button onclick="location.href='model'" class="continue-links">Part 4: Defining a Model</button>
+	<button onclick="location.href='traineval'" class="continue-links">Part 5: Training and Evaluating</button>
+	<button onclick="location.href='deploy'" class="continue-links">Part 6: Exporting, Testing, and Deploying</button>
+	<button onclick="location.href='summary'" class="continue-links">Part 7: All Together Now</button>
+	<button onclick="location.href='references'" class="continue-links">Part 8: Furthur Reading and References</button>
+</div>
+
+
+      <footer class="site-footer">
+        <div style="text-align: center">
+          <span class="site-social-media">
+            
+              <a href="https://twitter.com/crosleythomas" style="padding:10px 20px" target="_blank">
+                <i class="fa fa-twitter"></i> Twitter
+              </a>
+            
+            
+            
+              <a href="https://github.com/crosleythomas" style="padding:10px 20px" target="_blank">
+                <i class="fa fa-github"></i> GitHub
+              </a>
+            
+
+            
+              <a href="https://linkedin.com/in/crosleythomas" style="padding:10px 20px" target="_blank">
+                <i class="fa fa-linkedin"></i> LinkedIn
+              </a>
+            
+
+            
+              <a href="https://www.facebook.com/crosleythomas" style="padding:10px 20px" target="_blank">
+                <i class="fa fa-facebook"></i> Facebook
+              </a>
+            
+
+            
+              <a href="https://www.instagram.com/crosleythomas" style="padding:10px 20px" target="_blank">
+                <i class="fa fa-instagram"></i> Instagram
+              </a>
+            
+          </span>
+          <br><br><br>
+        </div>
+
+
+        
+          <span class="site-footer-owner"><a href="http://github.com/crosleythomas/blog">Blog</a> is maintained by <a href="http://github.com/crosleythomas">crosleythomas</a>.</span>
+        
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+      </footer>
+    </section>
+
+    
+  </body>
+</html>

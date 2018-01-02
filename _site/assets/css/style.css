@@ -319,4 +319,12 @@ a:hover { text-decoration: underline; }
 
 h1 { text-align: center; }
 
-.protip { margin-bottom: 15px; padding: 4px 12px; background-color: #e7f3fe; border-left: 6px solid #2196F3; }
+.protip { margin-bottom: 15px; padding: 2px 12px; background-color: #e7f3fe; border-left: 6px solid #2196F3; }
+
+.sidenote { margin-bottom: 15px; padding: 2px 12px; background-color: #ddffdd; border-left: 6px solid #4CAF50; }
+
+.success { margin-bottom: 15px; padding: 2px 12px; background-color: #ffffcc; border-left: 6px solid #ffeb3b; }
+
+.warning { margin-bottom: 15px; padding: 2px 12px; background-color: #ffdddd; border-left: 6px solid #f44336; }
+
+.continue-links { background-color: #155D94; padding: 10px 10px; text-align: center; cursor: pointer; color: white; margin: 4px 2px; }

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: TensorFlow End-to-End
+title: TensorFlow from Start to Finish
 
 ---
 
@@ -10,7 +10,12 @@ Implementation and engineering are becoming increasingly important parts of mach
 
 This guide focuses on how to implement projects in [TensorFlow](tensorflow.org).  TensorFlow is Google's "open-source software library for Machine Intelligence".
 
-TensorFlow is a great tool for everyone in machine learning but I often myself (1) repeating a lot of boiler plate code and (2) searching for undocumented features and best practices.  Here, I share a start-to-finish guide for taking your project from a messy set of data to a trained production model.  
+TensorFlow is a great tool for everyone in machine learning but I often myself 
+1. Repeating a lot of boiler plate code.
+2. Searching for undocumented features and best practices across several blogs.
+3. Finding an article for the correct topic but it is already out of date.
+
+Here, I share a start-to-finish guide for taking your project from a messy set of data to a trained production model.  Additionally, I'm planning on updating in place - when one of my practices changes because I improved my approach or TensorFlow has released a new version, I'll update the guide here.
 
 There are also templates from my related project [TensorPlates](https://github.com/crosleythomas/tensorplates) to get a new project going faster, pro-tips from little tricks I've learned along the way, and explanations for un-or-under-documented features.
 
