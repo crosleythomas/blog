@@ -19,7 +19,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="/assets/css/style.css?v=be48e8f0c283da4edfa554d788713013a2d4a6e2">
+    <link rel="stylesheet" href="/assets/css/style.css?v=4a6cb11caf3fc568d91e45d3e747880b225cb4d1">
   </head>
   <body>
     <section class="page-header">
@@ -29,38 +29,76 @@
     </section>
 
     <section class="main-content">
-      <h1 id="end-to-end-guide-to-developing-tensorflow-models">End-to-End Guide to Developing TensorFlow Models</h1>
+      <h1 id="start-to-finish-guide-for-developing-tensorflow-models">Start to Finish Guide for Developing TensorFlow Models</h1>
+
+<p>Implementation and engineering are becoming increasingly important parts of machine learning as data gets bigger and the competition between researchers and companies heats up.  Being able to quickly iterate on ideas is both necessary to keep up and makes machine learning a lot more fun.</p>
+
+<p>This guide focuses on how to implement projects in <a href="tensorflow.org">TensorFlow</a>.  TensorFlow is Google’s “open-source software library for Machine Intelligence”.</p>
+
+<p>TensorFlow is a great tool for everyone in machine learning but I often myself (1) repeating a lot of boiler plate code and (2) searching for undocumented features and best practices.  Here, I share a start-to-finish guide for taking your project from a messy set of data to a trained production model.</p>
+
+<p>There are also templates from my related project <a href="https://github.com/crosleythomas/tensorplates">TensorPlates</a> to get a new project going faster, pro-tips from little tricks I’ve learned along the way, and explanations for un-or-under-documented features.</p>
+
+<p>The explanations here assume prior knowledge of TensorFlow basics, python, and machine learning.</p>
+
+<h3 id="-part-1--setup">* <a href="setup">Part 1 – Setup</a></h3>
+<p>Configuring your development environment for TensorFlow development.</p>
+
+<h3 id="-part-2--preparing-data">* <a href="dataprep">Part 2 – Preparing Data</a></h3>
+<p>Taking your 20GB worth of jpeg images saved in 50 different directories and converting them into TensorFlow’s preferred data format - <a href="https://www.tensorflow.org/versions/master/api_docs/python/tf/data/TFRecordDataset">TFRecords</a>.</p>
+
+<h3 id="-part-3--consuming-data">* <a href="dataload">Part 3 – Consuming Data</a></h3>
+<p>Creating a data <a href="https://www.tensorflow.org/api_docs/python/tf/data/Iterator">Iterator</a> that reads TFRecords, performs any pre-processing, and feeds data into your compute graph.</p>
+
+<h3 id="-part-4--defining-a-model">* <a href="model">Part 4 – Defining a Model</a></h3>
+<p>Defining your model as a TensorFlow <a href="https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator">Estimator</a> – part of the new high-level API that handles some of the details of train/eval/test logic, logging results, and exporting your saved model.</p>
+
+<h3 id="-part-5--training-and-evaluating">* <a href="traineval">Part 5 – Training and Evaluating</a></h3>
+<p>This section covers the train/eval loop with Estimators as well as watching training with <a href="https://www.tensorflow.org/get_started/summaries_and_tensorboard">TensorBoard</a>.  I also share tips on how to do this when training remotely.</p>
+
+<h3 id="-part-6--exporting-testing-and-deploying">* <a href="deploy">Part 6 – Exporting, Testing, and Deploying</a></h3>
+<p>Exporting your trained model, testing on held-out data, and deploying that model for a service.</p>
+
+<h3 id="-part-7--all-together-now">* <a href="summary">Part 7 – All Together Now</a></h3>
+<p>Now that you understand every step of the process, let’s review and show how to put them all together quickly using templates that handle most of the boiler plate code.</p>
+
+<h3 id="-part-8--furthur-reading-and-references">* <a href="references">Part 8 – Furthur Reading and References</a></h3>
+<p>Links to articles I’ve found most useful, TensorFlow documentation, video guides, etc.</p>
+
+<hr />
+
+<div style="text-align: center"><b>Thank you for reading!  Comments and questions are appreciated <a href="https://github.com/crosleythomas/blog/issues">here</a>.</b></div>
 
 
       <footer class="site-footer">
         <div style="text-align: center">
           <span class="site-social-media">
             
-              <a href="https://twitter.com/crosleythomas" style="padding:10px 20px">
+              <a href="https://twitter.com/crosleythomas" style="padding:10px 20px" target="_blank">
                 <i class="fa fa-twitter"></i> Twitter
               </a>
             
             
             
-              <a href="https://github.com/crosleythomas" style="padding:10px 20px">
+              <a href="https://github.com/crosleythomas" style="padding:10px 20px" target="_blank">
                 <i class="fa fa-github"></i> GitHub
               </a>
             
 
             
-              <a href="https://linkedin.com/in/crosleythomas" style="padding:10px 20px">
+              <a href="https://linkedin.com/in/crosleythomas" style="padding:10px 20px" target="_blank">
                 <i class="fa fa-linkedin"></i> LinkedIn
               </a>
             
 
             
-              <a href="https://www.facebook.com/crosleythomas" style="padding:10px 20px">
+              <a href="https://www.facebook.com/crosleythomas" style="padding:10px 20px" target="_blank">
                 <i class="fa fa-facebook"></i> Facebook
               </a>
             
 
             
-              <a href="https://www.instagram.com/crosleythomas" style="padding:10px 20px">
+              <a href="https://www.instagram.com/crosleythomas" style="padding:10px 20px" target="_blank">
                 <i class="fa fa-instagram"></i> Instagram
               </a>
             
