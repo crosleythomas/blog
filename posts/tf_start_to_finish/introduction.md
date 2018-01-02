@@ -14,6 +14,7 @@ TensorFlow is a great tool for everyone in machine learning but I often myself
 1. Repeating a lot of boiler plate code.
 2. Searching for undocumented features and best practices across several blogs.
 3. Finding an article for the correct topic but it is already out of date.
+4. Not knowing which option to pick when there are several ways of implementing something.
 
 Here, I share a start-to-finish guide for taking your project from a messy set of data to a trained production model.  Additionally, I'm planning on updating in place - when one of my practices changes because I improved my approach or TensorFlow has released a new version, I'll update the guide here.
 
@@ -47,3 +48,6 @@ Links to articles I've found most useful, TensorFlow documentation, video guides
 
 <hr>
 <div style='text-align: center'><b>Thank you for reading!  Comments and questions are appreciated <a href="https://github.com/crosleythomas/blog/issues">here</a>.</b></div>
+<hr>
+<div style='text-align: center'><b>Contributors:</b><a href="http://github.com/crosleythomas"> Thomas Crosley</a></div>
+

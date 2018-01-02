@@ -38,7 +38,7 @@ pip install virtualenv
 # Create an environment for TensorFlow development
 virtualenv env --python=python3
 
-# Start the environment
+# Activate the environment
 source env/bin/activate
 
 # Install TensorFlow
@@ -62,29 +62,103 @@ jupyter notebook
 
 <h2 id="machine">Machine</h2>
 
+<p><span class="tldr"><b>tl;dr: </b>Get yourself an Ubuntu laptop or desktop with an NVIDIA GeForce GTX 1060, 1070, or 1080 GPU right now.</span></p>
+
+<p>Using the right machine can be the difference between an exciting, but unrecognized idea, and the next hit project.</p>
+
+<h4 id="software">Software</h4>
+<p>There is official support for Mac, Linux, and Windows machines.  However, almost everyone uses either Mac or Linux.  Linux (Ubuntu) is the best choice since you can find a lot of Linux machines for sale with NVIDIA GPUs (the only GPUs that work with TensorFlow).  Mac laptops don’t have NVIDIA GPUs but you can technically set up external GPUs.  Also, if you have the money to get a Mac Pro, NVIDIA launched the <a href="https://blogs.nvidia.com/blog/2017/04/06/titan-xp/">NVIDIA TITAN Xp</a> in May of 2017 that is Mac Pro compatible.</p>
+
+<h4 id="hardware">Hardware</h4>
+<p>In general, the following hardware setups are roughly ordered both in their benefit and the difficulty of set up:</p>
+
+<ol>
+  <li><b>Worst:</b> Local CPU Only Machine</li>
+  <li>Your Organization’s CPU Only Machines</li>
+  <li><b>Recommended:</b> Local CPU+GPU Machine</li>
+  <li>Your Organization’s GPU Only Machines</li>
+  <li><b>Best:</b> Distributed GPUs on a cloud service (Google Cloud, AWS, Azure)</li>
+</ol>
+
+<p>Note that TensorFlow only supports NVIDIA GPUs</p>
+
+<p><span class="protip"><b>Pro tip:</b> if buying a decent desktop with a good GPU (NVIDIA GeForce GTX 1060-1080) is close to within your budget, do it now.  You are going to do it eventually and you don’t want to give up on machine learning because you got frustrated with your lack of computing power.</span></p>
+
+<p>Having some, any, kind of GPU will help every deep learning project you do immensely.  For example, doing &lt; task &gt; on a CPU would take &lt; time &gt; but on a GPU it would only take &lt; time &gt;.  That’s the difference between trying out a new project one night and seeing it work and running the same project, checking back in two days, forgetting what parameters you used, getting frustrated, and giving up.</p>
+
+<p>Or, for another way of looking at this, enjoy Adam and Jamie from Mythbusters explain the power of GPUs. (Interesting to note this was made in 2009 and sponsored by NVIDIA.)</p>
+
+<div style="text-align: center;">
+	<iframe width="560" height="315" src="https://www.youtube.com/embed/-P28LKWTzrI?rel=0" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen="" align="center"></iframe>
+</div>
+
+<p>Hardware is a big topic I’ve only just gotten interested in recently.  This post is mostly about TensorFlow best practices.  In a future post I will share many more details on what hardware is best and why.</p>
+
+<p>Now that you have your hardware ready, let’s get up and running with the software.</p>
+
 <h2 id="virtual-environments">Virtual Environments</h2>
-<p><a href="">virtualenv</a></p>
+<p>Despite many people trying to get me to switch to <a href="https://conda.io/docs/user-guide/tasks/manage-environments.html">Conda environments</a>, I still find virtualenv the easiest tool to use for managing python dependencies.</p>
+
+<p><a href="https://virtualenv.pypa.io/en/stable/">Virtualenv</a> creates isolated Python environments so we can install different dependencies for different projects.</p>
+
+<p>First, make sure you have virtualenv on your machine.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install virtualenv
+</code></pre></div></div>
+
+<p>Next, create an environment for TensorFlow development.  This command will create a directory called <em>env</em> where all our dependencies will be stored.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>virtualenv env --python=python3
+</code></pre></div></div>
+
+<p>To start using this environment, ‘activate’ it with the following command:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>source env/bin/activate
+</code></pre></div></div>
+
+<p>Notice you should now see (env) appended to your terminal message.  For example mine changed from<br /></p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tcrosley: ...
+</code></pre></div></div>
+
+<p>to</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(env) tcrosley: ...
+</code></pre></div></div>
+
+<p>That means you are good to go.  Now, when you pip install something, it will install the new package to this virtual environment.  This may be important if you have different project using different versions of TensorFlow.  One of your old projects may use an environment with TensorFlow Version 1.X for backwards compatibility and TensorFlow Version 1.Y for all the latest features.</p>
 
 <h2 id="installing-tensorflow">Installing TensorFlow</h2>
 
 <h5 id="cpu-version">CPU Version</h5>
+<p>This guide only requires the CPU installation of TensorFlow.  Fortunately, installing this is as easy as:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip3 install tensorflow
+</code></pre></div></div>
+
+<p>You should now be able to import TensorFlow.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3
+&gt;&gt;&gt; import tensorflow as tf
+&gt;&gt;&gt; tf.__version__
+# '1.4.0' as of this writing
+</code></pre></div></div>
 
 <h5 id="gpu-version">GPU Version</h5>
+<p>Installing TensorFlow with GPU support is more difficult and requires installing cuda and cuDNN.  More to come on this later…</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Coming Soon
+</code></pre></div></div>
 
 <h2 id="jupyter-notebooks">Jupyter Notebooks</h2>
-<p>If you aren’t using <a href="http://jupyter.org/">Jupyter Notebooks</a> yet, start now.  I put off making the switch for far too long and research has gotten immeasurably since I did.  “The Jupyter Notebook is an open-source web application that allows you to create and share documents that contain live code, equations, visualizations and narrative text.” - jupyter.org<br /></p>
+<p>If you aren’t using <a href="http://jupyter.org/">Jupyter Notebooks</a> yet, start now.  I put off making the switch for far too long and research has gotten immeasurably more enjoyable since I did.  “The Jupyter Notebook is an open-source web application that allows you to create and share documents that contain live code, equations, visualizations and narrative text.” - jupyter.org<br /></p>
 
 <p>Jupyter is a program you run locally that pops open a tab in your web browser that looks like this…
 <img src="images/jupyterpreview.png" alt="Jupyter Preview" /></p>
 
 <p>It is the perfect environment for prototyping in machine learning and data science.  You can test out snippets of code, visualize images (such as your dataset to make sure you are loading it correctly), run training, etc.</p>
 
-<p><span class="protip"><b>Protip:</b> If you will eventually run the training on a server, prototype using Jupyter and then export the .ipynb notebook file as a .py with File –&gt; Download as –&gt; Python (.py) from inside the notebook.
+<p><span class="protip"><b>Pro tip:</b> If you will eventually run the training on a server, prototype using Jupyter and then export the .ipynb notebook file as a .py with File –&gt; Download as –&gt; Python (.py) from inside the notebook.
 </span>
 <br /><br />
 <img src="images/exporting_notebook.png" alt="Exporting Notebook" /></p>
 
-<p><span class="sidenote"><b>Sidenote:</b> Google has something now called <a href="https://colab.research.google.com/">Collaboratory</a> which takes Jupyter Notebooks and integrates them with Google Drive.  Collaboratory picks up a lot of the features from Google Docs such as saving in Drive, sharing a file with otheres who can live edit/run, and leave comments/feedback like you would any other Google Docs file.  I’m just starting to use these but think they are really exciting for projects with a lot of informal collaboration.</span>
+<p><span class="sidenote"><b>Side note:</b> Google now has something called <a href="https://colab.research.google.com/">Collaboratory</a> which takes Jupyter Notebooks and integrates them with Google Drive.  Collaboratory picks up a lot of the features from Google Docs such as saving in Drive, sharing a file with otheres who can live edit/run, and leave comments/feedback like you would any other Google Docs file.  I’m just starting to use these but think they are really exciting for projects with a lot of informal collaboration.</span>
 <br /><br />
 <img src="images/collaboratory.png" alt="Collaboratory Preview" /></p>
 
