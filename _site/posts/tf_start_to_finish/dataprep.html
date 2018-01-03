@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
 
 <!-- Begin Jekyll SEO tag v2.3.0 -->
-<title>blog</title>
-<meta property="og:title" content="blog" />
+<title>Data Preparation | blog</title>
+<meta property="og:title" content="Data Preparation" />
 <meta property="og:locale" content="en_US" />
 <link rel="canonical" href="http://localhost:4000/posts/tf_start_to_finish/dataprep.html" />
 <meta property="og:url" content="http://localhost:4000/posts/tf_start_to_finish/dataprep.html" />
 <meta property="og:site_name" content="blog" />
 <script type="application/ld+json">
-{"name":null,"description":null,"url":"http://localhost:4000/posts/tf_start_to_finish/dataprep.html","headline":"blog","dateModified":null,"datePublished":null,"sameAs":null,"@type":"WebPage","author":null,"image":null,"publisher":null,"mainEntityOfPage":null,"@context":"http://schema.org"}</script>
+{"name":null,"description":null,"url":"http://localhost:4000/posts/tf_start_to_finish/dataprep.html","headline":"Data Preparation","dateModified":null,"datePublished":null,"sameAs":null,"@type":"WebPage","author":null,"image":null,"publisher":null,"mainEntityOfPage":null,"@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -29,7 +29,149 @@
     </section>
 
     <section class="main-content">
-      
+      <h1 id="part-2-preparing-data">Part 2: Preparing Data</h1>
+
+<div style="text-align: center">
+	<a href="https://github.com/crosleythomas/tensorplates/blob/master/templates/prepare_tfrecord.ipynb" target="_blank">Accompanying Template</a><br />
+	<a href=".zip">Sample Data</a>
+</div>
+
+<p>Now that you’re all set up, it’s time to get your project off the ground.  The first step is getting data ready to be processed by the model you will make.  Preparing your data and defining your model go hand-in-hand so you may have to go back-and-forth between Parts <a href="dataprep">2</a>, <a href="dataload">3</a>, and <a href="model">4</a> before you see how it all fits together.</p>
+
+<p>The preferred, yet least documented, format for storing data is in TFRecord files.  TFRecord files (*.tfrecord) store data as records in a binary format.</p>
+
+<p>Let’s see how to take data and write it as TFRecord files.</p>
+
+<h2 id="writing-data-to-tfrecords">Writing Data to TFRecords</h2>
+
+<p>To convert your data to TFRecords, you will follow these steps:</p>
+<ol>
+  <li>Gather a datapoint (e.g. an image and corresponding label)</li>
+  <li>Create a <a href="https://www.tensorflow.org/api_docs/python/tf/python_io/TFRecordWriter">TFRecordWriter</a></li>
+  <li>Create an <a href="https://www.tensorflow.org/api_docs/python/tf/train/Example">Example</a> out of <a href="https://www.tensorflow.org/api_docs/python/tf/train/Feature">Features</a> constructed from your datapoint</li>
+  <li>Serialize the <a href="https://www.tensorflow.org/api_docs/python/tf/train/Example">Example</a></li>
+  <li>Write the <a href="https://www.tensorflow.org/api_docs/python/tf/train/Example">Example</a> to your TFRecord</li>
+</ol>
+
+<h3 id="imports-you-will-need-for-this-example">Imports you will need for this example</h3>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import tensorflow as tf
+import glob
+import imageio
+</code></pre></div></div>
+
+<h3 id="gathering-data">Gathering Data</h3>
+<p>This is the variable part of the conversion pipeline.  You may have a small batch of image (png/jpeg) files you can load into memory at once, a large dataset you need to load in piece-by-piece, or you may be generating data and writing to TFRecords dynamically.</p>
+
+<p>Let’s handle the simple case of loading in a single set of png images.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Gather file paths to all iamges
+data_dir = 'flowers'
+image_files = glob.glob(data_dir + '/*.png')
+
+# Parse labels from file
+f = open(data_dir + "/labels.txt", "r")
+lines = f.readlines()
+# lines[0] -- &lt;example_0_path&gt;:&lt;example_0_label&gt;
+
+labels = {}
+for l in lines:
+    path, label = l.split(":")
+    labels[path] = label
+
+# Now labels[image_0_path] == image_0_label
+</code></pre></div></div>
+
+<p>That was easy enough.  Now we have the file paths for all the images we want to store in our TFRecords and .</p>
+
+<h3 id="creating-tfrecord-writer">Creating TFRecord Writer</h3>
+
+<p>The TFRecordWriter is what we will use write each Example once it’s been constructed.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tfrecord_filename = 'flowers.tfrecord'
+writer = tf.python_io.TFRecordWriter(tfrecord_filename)
+</code></pre></div></div>
+
+<h3 id="creating-an-example">Creating an Example</h3>
+
+<p>An <a href="https://www.tensorflow.org/api_docs/python/tf/train/Example">Example</a> represents one datapoint in our dataset.  For example, an image/label pair for image classification or state/value for reinforcement learning.</p>
+
+<p>Each example is constructed from <a href="https://www.tensorflow.org/api_docs/python/tf/train/Feature">Features</a>.  One Feature is created for each subpiece of the datapoint - i.e. the image is one Feature and the label is another Feature.</p>
+
+<p>The following helper functions create Features for different data types.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def int64_feature(value):
+    return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
+
+def bytes_feature(value):
+    return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
+
+def float_feature(value):
+    return tf.train.Feature(bytes_list=tf.train.FloatList(value=[value]))
+</code></pre></div></div>
+
+<p>Now, let’s write a single image to our TFRecord file.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Load the image into memory and grab its label
+image = imageio.imread(image_files[0]) # loads image as a numpy array
+shape = image.shape                    # grab this so we can add it as a little meta-data
+label = labels[image_files[0]]
+
+# Create a dictionary of this example's features
+features = {
+	'height' : int64_feature(shape[0]),
+	'width' : int64_feature(shape[1]),
+	'depth' : int64_feature(shape[2]),
+	'image' : bytes_feature(image.tostring()),
+	'label' : int64_feature(int(label))
+}
+
+# Now we both construct tf.train.Features from our dictionary and
+#    construct a tf.train.Example from those features.
+example = tf.train.Example(features=tf.train.Features(feature=features))
+
+# To write it to our TFRecord file, we serialize the example and call write
+#    from our TFRecordWriter handle.
+writer.write(example.SerializeToString())
+</code></pre></div></div>
+
+<p><span class="warning"><b>Warning: </b>be mindful of the data type of your image before converting it to a feature.  I sometimes find my numpy data getting converted to float64 when we would much rather store it as uint8!  Note, however, that loading a png/jpeg with imageio.imread will return data as uint8.</span></p>
+
+<h3 id="creating-a-dataset">Creating a Dataset</h3>
+<p>It shouldn’t be too much of a stretch to throw this into a loop and continue calling <code class="highlighter-rouge">writer.write(...)</code> on your new examples.  See the <a href="https://github.com/crosleythomas/tensorplates/blob/master/templates/prepare_tfrecord.ipynb" target="_blank">TFRecord template</a> for how I reuse some boilerplate code for this process.</p>
+
+<h3 id="advanced-formatting">Advanced Formatting</h3>
+<p>There are several extensions of this basic process you may want to use when creating your records.</p>
+
+<ul>
+  <li>Splitting into train/validation/test records</li>
+  <li>Splitting data into multiple TFRecords to avoid giant files.</li>
+  <li>Loading small chunks of your data at one time</li>
+  <li>Interleaving generating data (e.g. interacting with the OpenAI Gym simulator) and then writing the data to a TFRecord</li>
+</ul>
+
+<p><span class="protip"><b>Pro tip: </b>The size of the TFRecord files you create should depend on… (memory limits of the computer you will run on?).  You can use the following to determine a good file size: </span></p>
+
+<hr />
+
+<h2 id="continue-reading">Continue Reading</h2>
+
+<p><button onclick="location.href='dataload'" class="continue-links">Continue to Part 3</button>
+In Part 3 we will see how to load these TFRecord files and prepare them to be used in a model we will build in <a href="model">Part 4</a>.</p>
+
+<hr />
+
+<div style="text-align: center;">
+	<button onclick="location.href='introduction'" class="continue-links">Introduction</button>
+	<button onclick="location.href='setup'" class="continue-links">Part 1: Setup</button>
+	<button onclick="location.href='dataprep'" class="continue-links">Part 2: Preparing Data</button>
+	<button onclick="location.href='dataload'" class="continue-links">Part 3: Consuming Data</button>
+	<button onclick="location.href='model'" class="continue-links">Part 4: Defining a Model</button>
+	<button onclick="location.href='traineval'" class="continue-links">Part 5: Training and Evaluating</button>
+	<button onclick="location.href='deploy'" class="continue-links">Part 6: Exporting, Testing, and Deploying</button>
+	<button onclick="location.href='summary'" class="continue-links">Part 7: All Together Now</button>
+	<button onclick="location.href='references'" class="continue-links">Part 8: Furthur Reading and References</button>
+</div>
+
 
 
       <footer class="site-footer">

@@ -146,13 +146,3 @@ In Part 3 we will see how to load these TFRecord files and prepare them to be us
 	<button onclick="location.href='references'" class='continue-links'>Part 8: Furthur Reading and References</button>
 </div>
 
-
-
-
-
-
-
-
-
-
-
