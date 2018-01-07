@@ -4,7 +4,7 @@ title: TensorFlow from Start to Finish
 
 ---
 
-# Start to Finish Guide for Developing TensorFlow Models
+# TensorFlow for Researchers:<br>A Start to Finish Guide
 
 Implementation and engineering are becoming increasingly important parts of machine learning as data gets bigger and the competition between researchers and companies heats up.  Being able to quickly iterate on ideas is both necessary to keep up and makes machine learning a lot more fun.
 

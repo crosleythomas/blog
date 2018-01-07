@@ -1,15 +1,15 @@
 ---
 layout: default
-title: Data Preparation
+title: Consuming Data
 
 ---
 
 # Part 3: Consuming Data
 
 <div style="text-align: center">
-	<a href='https://www.tensorflow.org/programmers_guide/datasets' target="_blank">Relevant TensorFlow Documentation</a><br>
+	<a href='https://www.tensorflow.org/programmers_guide/datasets' target="_blank">TensorFlow Programmer's Guide - Datasets</a><br>
 	<a href="https://github.com/crosleythomas/tensorplates/blob/master/templates/high_level_api.ipynb" target="_blank">Associated TensorPlates Template</a><br>
-	<a href=".zip" >Sample TFRecord Files</a>
+	<a href=".zip" >Running Example TFRecord Files</a>
 </div>
 
 Great, now we have data formatted as TFRecord files and ready to be ingested by a TensorFlow graph.
@@ -61,7 +61,6 @@ Constructs a Dataset, Iterator, and returns handles that will be called when
 
 	Inputs:
 		mode: string specifying whether to take the inputs from training or validation data
-
 	Outputs:
 		features: the columns of feature input returned from a dataset iterator
 		labels: the columns of labels for training return from a dataset iterator

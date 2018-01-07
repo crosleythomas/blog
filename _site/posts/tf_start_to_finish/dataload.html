@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
 
 <!-- Begin Jekyll SEO tag v2.3.0 -->
-<title>Data Preparation | blog</title>
-<meta property="og:title" content="Data Preparation" />
+<title>Consuming Data | blog</title>
+<meta property="og:title" content="Consuming Data" />
 <meta property="og:locale" content="en_US" />
 <link rel="canonical" href="http://localhost:4000/posts/tf_start_to_finish/dataload.html" />
 <meta property="og:url" content="http://localhost:4000/posts/tf_start_to_finish/dataload.html" />
 <meta property="og:site_name" content="blog" />
 <script type="application/ld+json">
-{"name":null,"description":null,"url":"http://localhost:4000/posts/tf_start_to_finish/dataload.html","headline":"Data Preparation","dateModified":null,"datePublished":null,"sameAs":null,"@type":"WebPage","author":null,"image":null,"publisher":null,"mainEntityOfPage":null,"@context":"http://schema.org"}</script>
+{"name":null,"description":null,"url":"http://localhost:4000/posts/tf_start_to_finish/dataload.html","headline":"Consuming Data","dateModified":null,"datePublished":null,"sameAs":null,"@type":"WebPage","author":null,"image":null,"publisher":null,"mainEntityOfPage":null,"@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -32,9 +32,9 @@
       <h1 id="part-3-consuming-data">Part 3: Consuming Data</h1>
 
 <div style="text-align: center">
-	<a href="https://www.tensorflow.org/programmers_guide/datasets" target="_blank">Relevant TensorFlow Documentation</a><br />
+	<a href="https://www.tensorflow.org/programmers_guide/datasets" target="_blank">TensorFlow Programmer's Guide - Datasets</a><br />
 	<a href="https://github.com/crosleythomas/tensorplates/blob/master/templates/high_level_api.ipynb" target="_blank">Associated TensorPlates Template</a><br />
-	<a href=".zip">Sample TFRecord Files</a>
+	<a href=".zip">Running Example TFRecord Files</a>
 </div>
 
 <p>Great, now we have data formatted as TFRecord files and ready to be ingested by a TensorFlow graph.</p>
@@ -85,7 +85,6 @@ Constructs a Dataset, Iterator, and returns handles that will be called when
 
 	Inputs:
 		mode: string specifying whether to take the inputs from training or validation data
-
 	Outputs:
 		features: the columns of feature input returned from a dataset iterator
 		labels: the columns of labels for training return from a dataset iterator

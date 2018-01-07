@@ -1,6 +1,6 @@
 ---
 layout: default
-title: TensorFlow Environment Setup
+title: Environment Setup
 
 ---
 
