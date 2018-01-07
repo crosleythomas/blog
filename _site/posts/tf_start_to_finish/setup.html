@@ -19,7 +19,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="/assets/css/style.css?v=4a6cb11caf3fc568d91e45d3e747880b225cb4d1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=9a3e8e355f5c1ec57ecca580dd61a915ea141328">
   </head>
   <body>
     <section class="page-header">
@@ -87,7 +87,7 @@ jupyter notebook
 <p>Having some, any, kind of GPU will help every deep learning project you do immensely.  <a href="http://hn.premii.com/#/article/15940724">This benchmarking article</a> does a really nice job of comparing both the speed and cost of CPUs and different GPUs.</p>
 
 <p>Check out the article for a detailed breakdown but here is the best diagram for understanding how much GPUs help.
-<img src="images/benchmarking_cnn_for_mnist.png" alt="Benchmarking" /></p>
+<img src="/posts/tf_start_to_finish/images/benchmarking_cnn_for_mnist.png" alt="Benchmarking" /></p>
 
 <p>That’s the difference between trying out a new project one night and seeing it work and running the same project, checking back in two days, forgetting what parameters you used, getting frustrated, and giving up.</p>
 
@@ -154,18 +154,18 @@ jupyter notebook
 <p>If you aren’t using <a href="http://jupyter.org/">Jupyter Notebooks</a> yet, start now.  I put off making the switch for far too long and research has gotten immeasurably more enjoyable since I did.  “The Jupyter Notebook is an open-source web application that allows you to create and share documents that contain live code, equations, visualizations and narrative text.” - jupyter.org<br /></p>
 
 <p>Jupyter is a program you run locally that pops open a tab in your web browser that looks like this…
-<img src="images/jupyterpreview.png" alt="Jupyter Preview" /></p>
+<img src="/posts/tf_start_to_finish/images/jupyterpreview.png" alt="Jupyter Preview" /></p>
 
 <p>It is the perfect environment for prototyping in machine learning and data science.  You can test out snippets of code, visualize images (such as your dataset to make sure you are loading it correctly), run training, etc.</p>
 
 <p><span class="protip"><b>Pro tip:</b> If you will eventually run the training on a server, prototype using Jupyter and then export the .ipynb notebook file as a .py with File –&gt; Download as –&gt; Python (.py) from inside the notebook.
 </span>
 <br /><br />
-<img src="images/exporting_notebook.png" alt="Exporting Notebook" /></p>
+<img src="/posts/tf_start_to_finish/images/exporting_notebook.png" alt="Exporting Notebook" /></p>
 
 <p><span class="sidenote"><b>Side note:</b> Google now has something called <a href="https://colab.research.google.com/">Collaboratory</a> which takes Jupyter Notebooks and integrates them with Google Drive.  Collaboratory picks up a lot of the features from Google Docs such as saving in Drive, sharing a file with otheres who can live edit/run, and leave comments/feedback like you would any other Google Docs file.  I’m just starting to use these but think they are really exciting for projects with a lot of informal collaboration.</span>
 <br /><br />
-<img src="images/collaboratory.png" alt="Collaboratory Preview" /></p>
+<img src="/posts/tf_start_to_finish/images/collaboratory.png" alt="Collaboratory Preview" /></p>
 
 <hr />
 
@@ -183,7 +183,7 @@ In Part 2 we will see how to prepare a dataset in TensorFlow’s TFRecord format
 	<button onclick="location.href='dataload'" class="continue-links">Part 3: Consuming Data</button>
 	<button onclick="location.href='model'" class="continue-links">Part 4: Defining a Model</button>
 	<button onclick="location.href='traineval'" class="continue-links">Part 5: Training and Evaluating</button>
-	<button onclick="location.href='deploy'" class="continue-links">Part 6: Exporting, Testing, and Deploying</button>
+	<button onclick="location.href='export'" class="continue-links">Part 6: Exporting, Testing, and Deploying</button>
 	<button onclick="location.href='summary'" class="continue-links">Part 7: All Together Now</button>
 	<button onclick="location.href='references'" class="continue-links">Part 8: Furthur Reading and References</button>
 </div>
@@ -211,15 +211,7 @@ In Part 2 we will see how to prepare a dataset in TensorFlow’s TFRecord format
             
 
             
-              <a href="https://www.facebook.com/crosleythomas" style="padding:10px 20px" target="_blank">
-                <i class="fa fa-facebook"></i> Facebook
-              </a>
-            
 
-            
-              <a href="https://www.instagram.com/crosleythomas" style="padding:10px 20px" target="_blank">
-                <i class="fa fa-instagram"></i> Instagram
-              </a>
             
           </span>
           <br><br><br>

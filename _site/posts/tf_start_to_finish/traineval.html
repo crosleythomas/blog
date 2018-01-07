@@ -5,21 +5,21 @@
     <meta charset="UTF-8">
 
 <!-- Begin Jekyll SEO tag v2.3.0 -->
-<title>blog</title>
-<meta property="og:title" content="blog" />
+<title>Training and Evaluating | blog</title>
+<meta property="og:title" content="Training and Evaluating" />
 <meta property="og:locale" content="en_US" />
 <link rel="canonical" href="http://localhost:4000/posts/tf_start_to_finish/traineval.html" />
 <meta property="og:url" content="http://localhost:4000/posts/tf_start_to_finish/traineval.html" />
 <meta property="og:site_name" content="blog" />
 <script type="application/ld+json">
-{"name":null,"description":null,"url":"http://localhost:4000/posts/tf_start_to_finish/traineval.html","headline":"blog","dateModified":null,"datePublished":null,"sameAs":null,"@type":"WebPage","author":null,"image":null,"publisher":null,"mainEntityOfPage":null,"@context":"http://schema.org"}</script>
+{"name":null,"description":null,"url":"http://localhost:4000/posts/tf_start_to_finish/traineval.html","headline":"Training and Evaluating","dateModified":null,"datePublished":null,"sameAs":null,"@type":"WebPage","author":null,"image":null,"publisher":null,"mainEntityOfPage":null,"@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="/assets/css/style.css?v=4a6cb11caf3fc568d91e45d3e747880b225cb4d1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=9a3e8e355f5c1ec57ecca580dd61a915ea141328">
   </head>
   <body>
     <section class="page-header">
@@ -29,7 +29,85 @@
     </section>
 
     <section class="main-content">
-      
+      <h1 id="part-5-training-and-evaluating">Part 5: Training and Evaluating</h1>
+
+<div style="text-align: center">
+	<a href="https://www.tensorflow.org/get_started/summaries_and_tensorboard" target="_blank">TensorFlow Getting Start - TensorBoard</a><br />
+	<a href="https://www.digitalocean.com/community/tutorials/how-to-use-sshfs-to-mount-remote-file-systems-over-ssh" target="_blank">Digital Ocean SSHFS Guide</a><br />
+	<a href="https://osxfuse.github.io/" target="_blank">SSHFS/FUSE for Mac</a><br />
+</div>
+
+<p>The hard part is done.  Now, all we have to do is kick off training and use <a href="https://www.tensorflow.org/get_started/summaries_and_tensorboard" target="_blank">TensorBoard</a> to monitor the progress.</p>
+
+<h2 id="starting-training-and-evaluation">Starting Training and Evaluation</h2>
+
+<p>To start training and evaluating, simply use the following code.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>################################################
+###   Inside &lt;project&gt;/code/train_model.py   ###
+################################################
+
+# Training/Evaluation Loop
+for e in range(params.train_epochs):
+    print('Epoch: ' + str(e))
+    estimator.train(input_fn=lambda: dataset_input_fn('train'))
+    estimator.evaluate(input_fn=lambda: dataset_input_fn('valid'))
+</code></pre></div></div>
+
+<p>Both <code class="highlighter-rouge">train</code> and <code class="highlighter-rouge">evaluate</code> run until <code class="highlighter-rouge">input_fn</code> raises an <code class="highlighter-rouge">OutOfRangeError</code> which happens at the end of the dataset since we are using the <a href="https://www.tensorflow.org/api_docs/python/tf/data/Dataset" target="_blank">Dataset</a> and <a href="https://www.tensorflow.org/api_docs/python/tf/data/Iterator" target="_blank">Iterator</a> APIs.</p>
+
+<h2 id="using-tensorboard-to-monitor-progress">Using TensorBoard to Monitor Progress</h2>
+
+<p>The best way to check in on the training of your model is with <a href="https://www.tensorflow.org/get_started/summaries_and_tensorboard" target="_blank">TensorBoard</a> – another tool built by Google for visualization of TensorFlow projects.</p>
+
+<p><img src="/posts/tf_start_to_finish/images/tensorboard_edward.png" alt="TensorBoard" /></p>
+
+<p>It used to be a bit of a pain to get TensorBoard working but with Estimator’s it’s quite easy.  All the metrics we defined in the Part 4 <code class="highlighter-rouge">model_fn</code> are automatically written to TensorBoard.  Now all we have to do is run the TensorBoard program.</p>
+
+<p><span class="protip"><b>Tip: </b>Right before the training loop I have the following line to make starting TensorBoard one step easier.  Copy/paste what it prints out into a terminal to launch TensorBoard.</span></p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>print('tensorboard --logdir=' + str(output_dir))
+</code></pre></div></div>
+
+<p>To see TensorBoard, open a web browser and go to <code class="highlighter-rouge">localhost:6000</code></p>
+
+<p><span class="protip"><b>Tip: </b>If you have multiple models at the same time you can run two instances of TensorBoard, you just need to pass separate port numbers with --port=XXXX</span></p>
+
+<p>That’s it!  Your model is now training, evaluating once at the end of every epoch, and reporting results intermittently to your live updating TensorBoard.</p>
+
+<h2 id="training-remotely-monitoring-locally">Training Remotely, Monitoring Locally</h2>
+<p>Often times you will be running your training on a remote server, say you department’s or company’s cluster.  If you start a training job on a remote instance and still want to use TensorBoard to track training progress live, I recommend using mounting the remote output directory locally with <a href="https://en.wikipedia.org/wiki/SSHFS" target="_blank">SSHFS</a>.  SSHFS gives you a local copy of a remote directory and continually updates the files in that directory as they change.  SSHFS should be installed already if you are using Linux.  If you using a Mac, you probably need to install SSHFS/Fuse <a href="https://osxfuse.github.io/" target="_blank">here</a>.</p>
+
+<p>I have a directory that’s only for mounting with SSHFS.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkdir ~/mnt
+</code></pre></div></div>
+
+<p>Let’s say you are training a model on a remote host <code class="highlighter-rouge">remote.school.edu</code>, your username is <code class="highlighter-rouge">user</code>, and the <code class="highlighter-rouge">output_dir</code> is <code class="highlighter-rouge">~/Documents/project/results/2017-12-04_14-19-29/</code>.  You can mount the output directory to your local mount director with:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sshfs user@remote.school.edu:~/Documents/project/results/2017-12-04_14-19-29/ ~/mnt/ -oauto_cache,reconnect,defer_permissions,noappledouble,negative_vncache,volname=MySSHFSMount
+</code></pre></div></div>
+
+<p>I needed the extra flags for connecting between my mac and the particular server I was working with but your setup may be slightly different.</p>
+
+<hr />
+
+<h2 id="continue-reading">Continue Reading</h2>
+
+<p><button onclick="location.href='export'" class="continue-links">Continue to Part 6</button>
+In Part 6 we will export and load the model back in with a few different methods.</p>
+
+<hr />
+
+<div style="text-align: center;">
+    <button onclick="location.href='introduction'" class="continue-links">Introduction</button>
+    <button onclick="location.href='setup'" class="continue-links">Part 1: Setup</button>
+    <button onclick="location.href='dataprep'" class="continue-links">Part 2: Preparing Data</button>
+    <button onclick="location.href='dataload'" class="continue-links">Part 3: Consuming Data</button>
+    <button onclick="location.href='model'" class="continue-links">Part 4: Defining a Model</button>
+    <button onclick="location.href='traineval'" class="continue-links">Part 5: Training and Evaluating</button>
+    <button onclick="location.href='export'" class="continue-links">Part 6: Exporting, Testing, and Deploying</button>
+    <button onclick="location.href='summary'" class="continue-links">Part 7: All Together Now</button>
+    <button onclick="location.href='references'" class="continue-links">Part 8: Furthur Reading and References</button>
+</div>
 
 
       <footer class="site-footer">
@@ -54,15 +132,7 @@
             
 
             
-              <a href="https://www.facebook.com/crosleythomas" style="padding:10px 20px" target="_blank">
-                <i class="fa fa-facebook"></i> Facebook
-              </a>
-            
 
-            
-              <a href="https://www.instagram.com/crosleythomas" style="padding:10px 20px" target="_blank">
-                <i class="fa fa-instagram"></i> Instagram
-              </a>
             
           </span>
           <br><br><br>

@@ -1,20 +1,19 @@
 ---
 layout: default
-title: References
+title: Exporting, Testing, and Deploying
 
 ---
 
-# Part 8: References
+# Part 6: Exporting, Testing, and Deploying
 
 
 <hr>
-<div style="text-align: center;">
-	<b>Thanks for reading!</b><br>
-	<button onclick="window.open('https://github.com/crosleythomas/blog/issues','_blank')" class='continue-links'>Contributions</button>
-	<button onclick="window.open('https://github.com/crosleythomas/tensorplates','_blank')" class='continue-links'>TensorPlates</button>
-</div>
-<hr>
+## Continue Reading
 
+<button onclick="location.href='summary'" class='continue-links'>Continue to Part 7</button>
+Part 7 summarizes all the pieces so far and how to put them all together.
+
+<hr>
 <div style="text-align: center;">
     <button onclick="location.href='introduction'" class='continue-links'>Introduction</button>
     <button onclick="location.href='setup'" class='continue-links'>Part 1: Setup</button>

@@ -37,7 +37,7 @@ Defining your model as a TensorFlow [Estimator](https://www.tensorflow.org/api_d
 ### * [Part 5 -- Training and Evaluating](traineval)
 This section covers the train/eval loop with Estimators as well as watching training with [TensorBoard](https://www.tensorflow.org/get_started/summaries_and_tensorboard).  I also share tips on how to do this when training remotely.
 
-### * [Part 6 -- Exporting, Testing, and Deploying](deploy)
+### * [Part 6 -- Exporting, Testing, and Deploying](export)
 Exporting your trained model, testing on held-out data, and deploying that model for a service.
 
 ### * [Part 7 -- All Together Now](summary)
@@ -47,8 +47,10 @@ Now that you understand every step of the process, let's review and show how to 
 Links to articles I've found most useful, TensorFlow documentation, video guides, etc.
 <br>
 You can find all the associated templates <a href="https://github.com/crosleythomas/tensorplates" target="_blank">here</a>.
-<button onclick="location.href='https://github.com/crosleythomas/tensorplates'" class='continue-links' target="_blank">TensorPlates Templates Project</button>
-	
+<div style="text-align: center">
+	<button onclick="location.href='https://github.com/crosleythomas/tensorplates'" class='continue-links' target="_blank">TensorPlates Templates Project</button>
+</div>
+
 <hr>
 <div style='text-align: center'><b>Thank you for reading!  Comments and questions are appreciated <a href="https://github.com/crosleythomas/blog/issues">here</a>.</b></div>
 <hr>

@@ -19,7 +19,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="/assets/css/style.css?v=4a6cb11caf3fc568d91e45d3e747880b225cb4d1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=9a3e8e355f5c1ec57ecca580dd61a915ea141328">
   </head>
   <body>
     <section class="page-header">
@@ -153,7 +153,10 @@ def model(features, labels, mode, params):
 
 <p>Here is a simple convolutional neural network for our running example:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##########################################
+###   Inside &lt;project&gt;/code/model.py   ###
+##########################################
+
 </code></pre></div></div>
 
 <h2 id="setting-additional-parameters">Setting Additional Parameters</h2>
@@ -172,14 +175,15 @@ def model(features, labels, mode, params):
 
 <p>For the running example let’s use the following:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>###################################
-###   Defined inside model.py   ###
-###################################
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##########################################
+###   Inside &lt;project&gt;/code/model.py   ###
+##########################################
 params = {
     layers = [
         {'num_outputs' : 10, 'kernel_size' : 3, 'stride' : 2, 'activation' : tf.nn.relu, 'regularizer' : tf.nn.l2_loss},
     ],
-    learning_rate = 0.001
+    learning_rate = 0.001,
+    train_epochs = 30
 }
 </code></pre></div></div>
 
@@ -260,7 +264,7 @@ estimator = load_estimator(...)
 
 <h2 id="continue-reading">Continue Reading</h2>
 
-<p><button onclick="location.href='model'" class="continue-links">Continue to Part 5</button>
+<p><button onclick="location.href='traineval'" class="continue-links">Continue to Part 5</button>
 In Part 5 we will train and evaluate the Estimator.</p>
 
 <hr />
@@ -272,7 +276,7 @@ In Part 5 we will train and evaluate the Estimator.</p>
     <button onclick="location.href='dataload'" class="continue-links">Part 3: Consuming Data</button>
     <button onclick="location.href='model'" class="continue-links">Part 4: Defining a Model</button>
     <button onclick="location.href='traineval'" class="continue-links">Part 5: Training and Evaluating</button>
-    <button onclick="location.href='deploy'" class="continue-links">Part 6: Exporting, Testing, and Deploying</button>
+    <button onclick="location.href='export'" class="continue-links">Part 6: Exporting, Testing, and Deploying</button>
     <button onclick="location.href='summary'" class="continue-links">Part 7: All Together Now</button>
     <button onclick="location.href='references'" class="continue-links">Part 8: Furthur Reading and References</button>
 </div>
@@ -300,15 +304,7 @@ In Part 5 we will train and evaluate the Estimator.</p>
             
 
             
-              <a href="https://www.facebook.com/crosleythomas" style="padding:10px 20px" target="_blank">
-                <i class="fa fa-facebook"></i> Facebook
-              </a>
-            
 
-            
-              <a href="https://www.instagram.com/crosleythomas" style="padding:10px 20px" target="_blank">
-                <i class="fa fa-instagram"></i> Instagram
-              </a>
             
           </span>
           <br><br><br>

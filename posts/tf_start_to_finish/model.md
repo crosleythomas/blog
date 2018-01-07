@@ -124,6 +124,9 @@ def model(features, labels, mode, params):
 Here is a simple convolutional neural network for our running example:
 
 ```
+##########################################
+###   Inside <project>/code/model.py   ###
+##########################################
 
 ```
 
@@ -142,14 +145,15 @@ I also like defining ```params``` in ```model.py``` since the parameters are log
 For the running example let's use the following:
 
 ```
-###################################
-###   Defined inside model.py   ###
-###################################
+##########################################
+###   Inside <project>/code/model.py   ###
+##########################################
 params = {
     layers = [
         {'num_outputs' : 10, 'kernel_size' : 3, 'stride' : 2, 'activation' : tf.nn.relu, 'regularizer' : tf.nn.l2_loss},
     ],
-    learning_rate = 0.001
+    learning_rate = 0.001,
+    train_epochs = 30
 }
 ```
 
@@ -235,7 +239,7 @@ And that's it!  The data is ready, the model is fully defined, and we are ready 
 <hr>
 ## Continue Reading
 
-<button onclick="location.href='model'" class='continue-links'>Continue to Part 5</button>
+<button onclick="location.href='traineval'" class='continue-links'>Continue to Part 5</button>
 In Part 5 we will train and evaluate the Estimator.
 
 <hr>
@@ -246,7 +250,7 @@ In Part 5 we will train and evaluate the Estimator.
     <button onclick="location.href='dataload'" class='continue-links'>Part 3: Consuming Data</button>
     <button onclick="location.href='model'" class='continue-links'>Part 4: Defining a Model</button>
     <button onclick="location.href='traineval'" class='continue-links'>Part 5: Training and Evaluating</button>
-    <button onclick="location.href='deploy'" class='continue-links'>Part 6: Exporting, Testing, and Deploying</button>
+    <button onclick="location.href='export'" class='continue-links'>Part 6: Exporting, Testing, and Deploying</button>
     <button onclick="location.href='summary'" class='continue-links'>Part 7: All Together Now</button>
     <button onclick="location.href='references'" class='continue-links'>Part 8: Furthur Reading and References</button>
 </div>

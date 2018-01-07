@@ -165,7 +165,7 @@ In Part 2 we will see how to prepare a dataset in TensorFlow's TFRecord format.
 	<button onclick="location.href='dataload'" class='continue-links'>Part 3: Consuming Data</button>
 	<button onclick="location.href='model'" class='continue-links'>Part 4: Defining a Model</button>
 	<button onclick="location.href='traineval'" class='continue-links'>Part 5: Training and Evaluating</button>
-	<button onclick="location.href='deploy'" class='continue-links'>Part 6: Exporting, Testing, and Deploying</button>
+	<button onclick="location.href='export'" class='continue-links'>Part 6: Exporting, Testing, and Deploying</button>
 	<button onclick="location.href='summary'" class='continue-links'>Part 7: All Together Now</button>
 	<button onclick="location.href='references'" class='continue-links'>Part 8: Furthur Reading and References</button>
 </div>
