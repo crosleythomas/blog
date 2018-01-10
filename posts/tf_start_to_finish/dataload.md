@@ -9,7 +9,6 @@ title: Consuming Data
 <div style="text-align: center">
     <a href='https://www.tensorflow.org/programmers_guide/datasets' target="_blank">TensorFlow Programmer's Guide - Datasets</a><br>
     <a href="https://github.com/crosleythomas/tensorplates/blob/master/templates/high_level_api.ipynb" target="_blank">Associated TensorPlates Template</a><br>
-    <b><a href="data/tfrecords.zip" >Running Example TFRecord Files</a></b>
 </div>
 
 Great, now we have data formatted as TFRecord files and ready to be ingested by a TensorFlow graph.
