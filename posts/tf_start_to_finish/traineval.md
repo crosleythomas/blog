@@ -19,9 +19,9 @@ The hard part is done.  Now, all we have to do is kick off training and use <a h
 To start training and evaluating, simply use the following code.
 
 ```
-################################################
-###   Inside <project>/code/train_model.py   ###
-################################################
+######################################
+###   Inside code/train_model.py   ###
+######################################
 
 # Training/Evaluation Loop
 for e in range(params.train_epochs):
@@ -42,7 +42,7 @@ It used to be a bit of a pain to get TensorBoard working but with Estimator's it
 
 <span class="protip"><b>Tip: </b>Right before the training loop I have the following line to make starting TensorBoard one step easier.  Copy/paste what it prints out into a terminal to launch TensorBoard.</span>
 ```
-print('tensorboard --logdir=' + str(output_dir))
+print('tensorboard --logdir=' + str(model_dir))
 ```
 
 To see TensorBoard, open a web browser and go to ```localhost:6000```
@@ -66,6 +66,8 @@ sshfs user@remote.school.edu:~/Documents/project/results/2017-12-04_14-19-29/ ~/
 ```
 
 I needed the extra flags for connecting between my mac and the particular server I was working with but your setup may be slightly different.
+
+<span class="example"><b>Running Example: </b>the complete (up to this point) train.py file can be found <a href="code/train_part5.py">here</a>.</span>
 
 <hr>
 ## Continue Reading

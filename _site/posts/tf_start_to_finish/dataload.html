@@ -32,9 +32,9 @@
       <h1 id="part-3-consuming-data">Part 3: Consuming Data</h1>
 
 <div style="text-align: center">
-	<a href="https://www.tensorflow.org/programmers_guide/datasets" target="_blank">TensorFlow Programmer's Guide - Datasets</a><br />
-	<a href="https://github.com/crosleythomas/tensorplates/blob/master/templates/high_level_api.ipynb" target="_blank">Associated TensorPlates Template</a><br />
-	<a href=".zip">Running Example TFRecord Files</a>
+    <a href="https://www.tensorflow.org/programmers_guide/datasets" target="_blank">TensorFlow Programmer's Guide - Datasets</a><br />
+    <a href="https://github.com/crosleythomas/tensorplates/blob/master/templates/high_level_api.ipynb" target="_blank">Associated TensorPlates Template</a><br />
+    <b><a href="data/tfrecords.zip">Running Example TFRecord Files</a></b>
 </div>
 
 <p>Great, now we have data formatted as TFRecord files and ready to be ingested by a TensorFlow graph.</p>
@@ -46,14 +46,18 @@
 
 <p>When developing a new model, and in the <a href="https://github.com/crosleythomas/tensorplates/blob/master/templates/high_level_api.ipynb" target="_blank">associated template</a> for training a model, I go through the following steps:</p>
 <ul>
-  <li>Gathering saved data</li>
+  <li>Gather saved data</li>
   <li>Create a dataset_input_fn</li>
-  <li>Constructing the Dataset</li>
+  <li>Construct the Dataset</li>
   <li>Define the parse function</li>
 </ul>
 
 <h2 id="imports-needed-for-the-rest-of-part-3">Imports needed for the rest of Part 3</h2>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import tensorflow as tf
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>################################
+###   Inside code/train.py   ###
+################################
+
+import tensorflow as tf
 import glob
 </code></pre></div></div>
 
@@ -63,8 +67,12 @@ import glob
 
 <p>Your code will vary slightly here depending on exactly how you stored data.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>train_dir = 'data/train'
-valid_dir = 'data/valid'
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>################################
+###   Inside code/train.py   ###
+################################
+
+train_dir = '../data/tfrecords/train'
+valid_dir = '../data/tfrecords/valid'
 
 train_files = glob.glob(train_dir + '/*.tfrecord')
 valid_files = glob.glob(valid_dir + '/*.tfrecord')
@@ -78,67 +86,76 @@ data_files = {'train' : train_files, 'valid' : valid_files}
 <h2 id="creating-a-dataset_input_fn">Creating a dataset_input_fn</h2>
 <p>Since we are constrained to using a <a href="https://www.tensorflow.org/api_docs/python/tf/data/Dataset#make_one_shot_iterator" target="_blank">one_shot_iterator</a> with Estimators instead of an <a href="https://www.tensorflow.org/api_docs/python/tf/data/Dataset#make_initializable_iterator" target="_blank">initializable_iterator</a>, which is useful for switching between train, validation, and test, I abstract away the dataset creating one level.  As we will see later, this is useful when switching from training to evaluation.  This function pretty much stays the same across projects.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'''
-Constructs a Dataset, Iterator, and returns handles that will be called when
-	Estimator requires a new batch of data. This function will be passed into 
-	Estimator as the input_fn argument.
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>################################
+###   Inside code/train.py   ###
+################################
 
-	Inputs:
-		mode: string specifying whether to take the inputs from training or validation data
-	Outputs:
-		features: the columns of feature input returned from a dataset iterator
-		labels: the columns of labels for training return from a dataset iterator
+'''
+Constructs a Dataset, Iterator, and returns handles that will be called when
+    Estimator requires a new batch of data. This function will be passed into 
+    Estimator as the input_fn argument.
+
+    Inputs:
+        mode: string specifying whether to take the inputs from training or validation data
+    Outputs:
+        features: the columns of feature input returned from a dataset iterator
+        labels: the columns of labels for training return from a dataset iterator
 '''
 def dataset_input_fn(mode):
-	# Function that does the heavy lifting for constructing a Dataset
-	#    depending on the current mode of execution
-	dataset = load_dataset(mode)
+    # Function that does the heavy lifting for constructing a Dataset
+    #    depending on the current mode of execution
+    dataset = load_dataset(mode)
 
-	# Making an iterator that runs from start to finish once
-	#    (the preferred type for Estimators)
-	iterator = dataset.make_one_shot_iterator()
+    # Making an iterator that runs from start to finish once
+    #    (the preferred type for Estimators)
+    iterator = dataset.make_one_shot_iterator()
 
-	# Consuming the next batch of data from our iterator
-	features, labels = iterator.get_next()
+    # Consuming the next batch of data from our iterator
+    features, labels = iterator.get_next()
 
-	return features, labels
+    return features, labels
 </code></pre></div></div>
 
 <h2 id="constructing-the-dataset">Constructing the Dataset</h2>
 
 <p>Now it’s time to create the <a href="https://www.tensorflow.org/api_docs/python/tf/data/Dataset" target="_blank">Dataset</a> object by filling in the <code class="highlighter-rouge">load_dataset</code> function we just called.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'''
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>################################
+###   Inside code/train.py   ###
+################################
+
+'''
 Loads and does all processing for a portion of the dataset specified by 'mode'.
 
-	Inputs:
-		mode: string specifying whether to take the inputs from training or validation data
+    Inputs:
+        mode: string specifying whether to take the inputs from training or validation data
 
-	Outputs:
-		dataset: the Dataset object constructed for this mode and pre-processed
+    Outputs:
+        dataset: the Dataset object constructed for this mode and pre-processed
 '''
 def load_dataset(mode):
-	# Taking either the train or validation files from the dictionary we constructed above
-	files = data_files[mode]
+    # Taking either the train or validation files from the dictionary we constructed above
+    files = data_files[mode]
 
-	# Created a Dataset from our list of TFRecord files
-	dataset = tf.data.TFRecordDataset(files)
+    # Created a Dataset from our list of TFRecord files
+    dataset = tf.data.TFRecordDataset(files)
 
-	# Apply any processing we need on each example in our dataset.  We
-	#    will define parse next.  num_parallel_calls decides how many records
-	#    to apply the parse function to at a time (change this based on your
-	#    machine).
-	dataset = dataset.map(parse, num_parallel_calls=2)
+    # Apply any processing we need on each example in our dataset.  We
+    #    will define parse next.  num_parallel_calls decides how many records
+    #    to apply the parse function to at a time (change this based on your
+    #    machine).
+    dataset = dataset.map(parse, num_parallel_calls=2)
 
-	# Shuffle the data if training, for validation it is not necessary
-	# buffer_size determines how large the buffer of records we will shuffle
-	#    is, (larger is better!) but be wary of your memory capacity.
-	if mode == 'train':
-		dataset = dataset.shuffle(buffer_size=1000)
+    # Shuffle the data if training, for validation it is not necessary
+    # buffer_size determines how large the buffer of records we will shuffle
+    #    is, (larger is better!) but be wary of your memory capacity.
+    if mode == 'train':
+        dataset = dataset.shuffle(buffer_size=1000)
 
-	# Batch the data - you can pick a batch size, maybe 32, and later
-	#    we will include this in a dictionary of other hyper parameters.
-	dataset = dataset.batch(hyper_params.batch_size)
+    # Batch the data - you can pick a batch size, maybe 32, and later
+    #    we will include this in a dictionary of other hyper parameters.
+    dataset = dataset.batch(params.batch_size)
+    return dataset
 
 </code></pre></div></div>
 
@@ -161,71 +178,98 @@ def load_dataset(mode):
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'''
 The function that will be call by the map function of a dataset.
 
-	Inputs:
-		record: a single record from the Dataset.
+    Inputs:
+        record: a single record from the Dataset.
 
-	Outputs:
-		inputs: a dictionary of input features indexed by the string name of the feature
-		label: the label for this record
+    Outputs:
+        inputs: a dictionary of input features indexed by the string name of the feature
+        label: the label for this record
 '''
-def parser(record):
-	
-	###########################
-	###    Your Code Here   ###
-	###########################
+def parse(record):
+    
+    ###########################
+    ###    Your Code Here   ###
+    ###########################
 
-	return inputs, label
+    return inputs, label
 
 </code></pre></div></div>
 
 <p>When using a TFRecordDataset it will typically look like this:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def parser(record):
-	# Define the features to be parsed out of each example.
-	features={
-		'feature_0_name': tf.FixedLenFeature([], tf.int64), # data type will vary
-		'feature_1_name': tf.FixedLenFeature([], tf.int64),
-		...
-		'feature_N_name': tf.FixedLenFeature([], tf.int64),
-	}
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def parse(record):
+    # Define the features to be parsed out of each example.
+    features={
+        'feature_0_name': tf.FixedLenFeature([], tf.int64), # data type will vary
+        'feature_1_name': tf.FixedLenFeature([], tf.int64),
+        ...
+        'feature_N_name': tf.FixedLenFeature([], tf.int64),
+    }
 
-	# Parse the features out of this one record we were passed
-	parsed = tf.parse_single_example(record, features)
+    # Parse the features out of this one record we were passed
+    parsed = tf.parse_single_example(record, features)
 
-	###########################################################
-	###   Your pre-processing and/or formatting code here   ###
-	###########################################################
+    ###########################################################
+    ###   Your pre-processing and/or formatting code here   ###
+    ###########################################################
 
-	return inputs, label
+    return inputs, label
 </code></pre></div></div>
 
-<p>We will use the following for our running example:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def parser(record):
-	# Define the features to be parsed out of each example.
-	#    You should recognize this from when we wrote the TFRecord files!
-	features={
-		'height': tf.FixedLenFeature([], tf.int64),
-		'width': tf.FixedLenFeature([], tf.int64),
-		'depth': tf.FixedLenFeature([], tf.int64),
-		'image': tf.FixedLenFeature([], tf.string),
-		'label': tf.FixedLenFeature([], tf.int64)
-	}
+<p><span class="example"><b>Running Example:</b> We will use the following for our running example:</span></p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>################################
+###   Inside code/train.py   ###
+################################
 
-	# Parse the features out of this one record we were passed
-	parsed = tf.parse_single_example(record, features)
-
-	# Format the data
-	H = tf.cast(parsed['height'], tf.int32)
-	W = tf.cast(parsed['width'], tf.int32)
-	D = tf.cast(parsed['width'], tf.int32)
-	image = tf.cast(tf.reshape(tf.image.decode_jpeg(parsed["image"]), [H, W, D]), tf.float32)
-	label = tf.cast(parsed['label'], tf.int32)
-	
-	# TODO: Check if this works or do we need to hardcode shape?
-	image.set_shape([H, W, D])
-
-	return {'image': image}, label
+def parse(record):
+    # Define the features to be parsed out of each example.
+    #    You should recognize this from when we wrote the TFRecord files!
+    features={
+        'height': tf.FixedLenFeature([], tf.int64),
+        'width': tf.FixedLenFeature([], tf.int64),
+        'depth': tf.FixedLenFeature([], tf.int64),
+        'image': tf.FixedLenFeature([], tf.string),
+        'label': tf.FixedLenFeature([], tf.int64)
+    }
+    # Parse the features out of this one record we were passed
+    parsed = tf.parse_single_example(record, features)
+    # Format the data
+    H = tf.cast(parsed['height'], tf.int32)
+    W = tf.cast(parsed['width'], tf.int32)
+    D = tf.cast(parsed['depth'], tf.int32)
+    # Decode from the bytes that were written to the TFRecord
+    image = tf.decode_raw(parsed["image"], tf.uint8)
+    # Use the metadata we wrote to reshape as an image
+    image = tf.reshape(image, [H, W, D])
+    # Cast so we can later pass this data to convolutional layers
+    image = tf.cast(image, tf.float32)
+    # Crop/pad such that all images are the same size -- this will be specified in params later
+    image = tf.image.resize_image_with_crop_or_pad(image, params.image_height, params.image_width)
+    # Tell TensorFlow what the shape is so it doesn't think this is still a dynamic variable
+    image.set_shape([params.image_height, params.image_width, params.image_depth])
+    label = tf.cast(parsed['label'], tf.int32)
+    return {'image': image}, label
 </code></pre></div></div>
+
+<p><span class="example"><b>Running Example: </b>the complete (up to this point) train.py file can be found <a href="code/train_part3.py">here</a>.</span></p>
+
+<p>Part 4 will show how to use these functions with an Estimator, but if you would like to loop through some data and display it you can add the following code to your train.py file:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>from PIL import Image
+
+sess = tf.Session()
+params = tf.contrib.training.HParams(batch_size = 1, image_height = 300, image_width = 200, image_depth = 3)
+images, labels = dataset_input_fn('train')
+
+while True:
+    input_batch, label_batch = sess.run([images, labels])
+    img = Image.fromarray(input_batch['image'][0].astype('uint8'), 'RGB')
+    img.show()
+    input('[Enter] to continue.')
+
+</code></pre></div></div>
+
+<hr />
 
 <p>Awesome, we now have the whole data pipeline set up and are ready to make the TensorFlow model.</p>
 
@@ -239,15 +283,15 @@ In Part 4 we will build a model to use this data!</p>
 <hr />
 
 <div style="text-align: center;">
-	<button onclick="location.href='introduction'" class="continue-links">Introduction</button>
-	<button onclick="location.href='setup'" class="continue-links">Part 1: Setup</button>
-	<button onclick="location.href='dataprep'" class="continue-links">Part 2: Preparing Data</button>
-	<button onclick="location.href='dataload'" class="continue-links">Part 3: Consuming Data</button>
-	<button onclick="location.href='model'" class="continue-links">Part 4: Defining a Model</button>
-	<button onclick="location.href='traineval'" class="continue-links">Part 5: Training and Evaluating</button>
-	<button onclick="location.href='export'" class="continue-links">Part 6: Exporting, Testing, and Deploying</button>
-	<button onclick="location.href='summary'" class="continue-links">Part 7: All Together Now</button>
-	<button onclick="location.href='references'" class="continue-links">Part 8: Furthur Reading and References</button>
+    <button onclick="location.href='introduction'" class="continue-links">Introduction</button>
+    <button onclick="location.href='setup'" class="continue-links">Part 1: Setup</button>
+    <button onclick="location.href='dataprep'" class="continue-links">Part 2: Preparing Data</button>
+    <button onclick="location.href='dataload'" class="continue-links">Part 3: Consuming Data</button>
+    <button onclick="location.href='model'" class="continue-links">Part 4: Defining a Model</button>
+    <button onclick="location.href='traineval'" class="continue-links">Part 5: Training and Evaluating</button>
+    <button onclick="location.href='export'" class="continue-links">Part 6: Exporting, Testing, and Deploying</button>
+    <button onclick="location.href='summary'" class="continue-links">Part 7: All Together Now</button>
+    <button onclick="location.href='references'" class="continue-links">Part 8: Furthur Reading and References</button>
 </div>
 
 

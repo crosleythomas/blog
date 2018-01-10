@@ -43,9 +43,9 @@
 
 <p>To start training and evaluating, simply use the following code.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>################################################
-###   Inside &lt;project&gt;/code/train_model.py   ###
-################################################
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>######################################
+###   Inside code/train_model.py   ###
+######################################
 
 # Training/Evaluation Loop
 for e in range(params.train_epochs):
@@ -65,7 +65,7 @@ for e in range(params.train_epochs):
 <p>It used to be a bit of a pain to get TensorBoard working but with Estimator’s it’s quite easy.  All the metrics we defined in the Part 4 <code class="highlighter-rouge">model_fn</code> are automatically written to TensorBoard.  Now all we have to do is run the TensorBoard program.</p>
 
 <p><span class="protip"><b>Tip: </b>Right before the training loop I have the following line to make starting TensorBoard one step easier.  Copy/paste what it prints out into a terminal to launch TensorBoard.</span></p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>print('tensorboard --logdir=' + str(output_dir))
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>print('tensorboard --logdir=' + str(model_dir))
 </code></pre></div></div>
 
 <p>To see TensorBoard, open a web browser and go to <code class="highlighter-rouge">localhost:6000</code></p>
@@ -87,6 +87,8 @@ for e in range(params.train_epochs):
 </code></pre></div></div>
 
 <p>I needed the extra flags for connecting between my mac and the particular server I was working with but your setup may be slightly different.</p>
+
+<p><span class="example"><b>Running Example: </b>the complete (up to this point) train.py file can be found <a href="code/train_part5.py">here</a>.</span></p>
 
 <hr />
 

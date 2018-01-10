@@ -32,8 +32,8 @@
       <h1 id="part-2-preparing-data">Part 2: Preparing Data</h1>
 
 <div style="text-align: center">
-	<a href="https://github.com/crosleythomas/tensorplates/blob/master/templates/prepare_tfrecord.ipynb" target="_blank">Accompanying Template</a><br />
-	<a href=".zip">Sample Data</a>
+    <a href="data/Caltech50.zip">Sample Data</a><br />
+    <a href="https://github.com/crosleythomas/tensorplates/blob/master/templates/prepare_tfrecord.ipynb" target="_blank">Accompanying Template</a><br />
 </div>
 
 <p>Now that you’re all set up, it’s time to get your project off the ground.  The first step is getting data ready to be processed by the model you will make.  Preparing your data and defining your model go hand-in-hand so you may have to go back-and-forth between Parts <a href="dataprep">2</a>, <a href="dataload">3</a>, and <a href="model">4</a> before you see how it all fits together.</p>
@@ -53,32 +53,38 @@
   <li>Write the <a href="https://www.tensorflow.org/api_docs/python/tf/train/Example">Example</a> to your TFRecord</li>
 </ol>
 
+<p><span class="example"><b>Running Example: </b> to keep up with the example download <a href="data/Caltech50.zip"> this data</a> and copy/unzip it in your data folder.</span></p>
+
 <h3 id="imports-you-will-need-for-this-example">Imports you will need for this example</h3>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import tensorflow as tf
-import glob
-import imageio
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>###########################################
+###   Inside data/create_tfrecords.py   ###
+###########################################
+import tensorflow as tf
+import glob, imageio, shutil, os
 </code></pre></div></div>
 
 <h3 id="gathering-data">Gathering Data</h3>
-<p>This is the variable part of the conversion pipeline.  You may have a small batch of image (png/jpeg) files you can load into memory at once, a large dataset you need to load in piece-by-piece, or you may be generating data and writing to TFRecords dynamically.</p>
+<p>This is the most variable part of the conversion pipeline.  You may have a small batch of image (png/jpeg) files you can load into memory at once, a large dataset you need to load in piece-by-piece, or you may be generating data (i.e. interacting with a simulator) and writing to TFRecords dynamically.</p>
 
-<p>Let’s handle the simple case of loading in a single set of png images.</p>
+<p>Let’s handle the simple case of loading in a single set of jpeg images.  The data provided is a subset of the <a href="http://www.vision.caltech.edu/Image_Datasets/Caltech101/">Caltech 101 dataset</a>.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Gather file paths to all iamges
-data_dir = 'flowers'
-image_files = glob.glob(data_dir + '/*.png')
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>###########################################
+###   Inside data/create_tfrecords.py   ###
+###########################################
 
-# Parse labels from file
-f = open(data_dir + "/labels.txt", "r")
-lines = f.readlines()
-# lines[0] -- &lt;example_0_path&gt;:&lt;example_0_label&gt;
+# Gather file paths to all iamges
+data_dir = 'Caltech50'
+object_dirs = glob.glob(data_dir + '/*')
 
-labels = {}
-for l in lines:
-    path, label = l.split(":")
-    labels[path] = label
+objects = {}
+for d in object_dirs:
+    objects[d.split('/')[1]] = glob.glob(d + '/*.jpg')
 
-# Now labels[image_0_path] == image_0_label
+# Create an integer label for each object category
+categories = list(objects.keys())
+category_labels = {}
+for i in range(len(categories)):
+    category_labels[categories[i]] = i
 </code></pre></div></div>
 
 <p>That was easy enough.  Now we have the file paths for all the images we want to store in our TFRecords and .</p>
@@ -87,19 +93,26 @@ for l in lines:
 
 <p>The TFRecordWriter is what we will use write each Example once it’s been constructed.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tfrecord_filename = 'flowers.tfrecord'
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Say we want one of the files to be named 'gerenuk.tfrecord' for one of the categories
+tfrecord_filename = 'gerenuk.tfrecord'
 writer = tf.python_io.TFRecordWriter(tfrecord_filename)
 </code></pre></div></div>
 
+<p>We will be creating one tfrecord file for every category below.</p>
+
 <h3 id="creating-an-example">Creating an Example</h3>
 
-<p>An <a href="https://www.tensorflow.org/api_docs/python/tf/train/Example">Example</a> represents one datapoint in our dataset.  For example, an image/label pair for image classification or state/value for reinforcement learning.</p>
+<p>An <a href="https://www.tensorflow.org/api_docs/python/tf/train/Example">Example</a> represents one datapoint in our dataset – e.g. an image/label pair for image classification or state/value for reinforcement learning.</p>
 
 <p>Each example is constructed from <a href="https://www.tensorflow.org/api_docs/python/tf/train/Feature">Features</a>.  One Feature is created for each subpiece of the datapoint - i.e. the image is one Feature and the label is another Feature.</p>
 
 <p>The following helper functions create Features for different data types.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def int64_feature(value):
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##########################################
+###   Inside data/create_tfrecord.py   ###
+##########################################
+
+def int64_feature(value):
     return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
 
 def bytes_feature(value):
@@ -109,23 +122,24 @@ def float_feature(value):
     return tf.train.Feature(bytes_list=tf.train.FloatList(value=[value]))
 </code></pre></div></div>
 
-<p>Now, let’s write a single image to our TFRecord file.</p>
+<p>To write a single image to our TFRecord file we would do the following:</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Load the image into memory and grab its label
-image = imageio.imread(image_files[0]) # loads image as a numpy array
-shape = image.shape                    # grab this so we can add it as a little meta-data
-label = labels[image_files[0]]
+category = list(objects.keys())[0]              # choose the first category -- 'gerenuk'
+image = imageio.imread(objects[category][0])    # load the first gerenuk image as a numpy array
+shape = image.shape                             # grab the shape so we can add it as meta-data
+label = category_labels[category]
 
 # Create a dictionary of this example's features
 features = {
-	'height' : int64_feature(shape[0]),
-	'width' : int64_feature(shape[1]),
-	'depth' : int64_feature(shape[2]),
-	'image' : bytes_feature(image.tostring()),
-	'label' : int64_feature(int(label))
+    'height' : int64_feature(shape[0]),
+    'width' : int64_feature(shape[1]),
+    'depth' : int64_feature(shape[2]),
+    'image' : bytes_feature(image.tostring()),
+    'label' : int64_feature(int(label))
 }
 
-# Now we both construct tf.train.Features from our dictionary and
+# Now we both construct tf.train.Features from our feature dictionary and
 #    construct a tf.train.Example from those features.
 example = tf.train.Example(features=tf.train.Features(feature=features))
 
@@ -134,10 +148,61 @@ example = tf.train.Example(features=tf.train.Features(feature=features))
 writer.write(example.SerializeToString())
 </code></pre></div></div>
 
-<p><span class="warning"><b>Warning: </b>be mindful of the data type of your image before converting it to a feature.  I sometimes find my numpy data getting converted to float64 when we would much rather store it as uint8!  Note, however, that loading a png/jpeg with imageio.imread will return data as uint8.</span></p>
+<p><span class="warning"><b>Warning: </b>be mindful of the data type of your image before converting it to a feature.  I sometimes find my numpy data getting converted to float64 when we would much rather store it as uint8!  loading a png/jpeg with imageio.imread will return data as uint8.</span></p>
 
 <h3 id="creating-a-dataset">Creating a Dataset</h3>
-<p>It shouldn’t be too much of a stretch to throw this into a loop and continue calling <code class="highlighter-rouge">writer.write(...)</code> on your new examples.  See the <a href="https://github.com/crosleythomas/tensorplates/blob/master/templates/prepare_tfrecord.ipynb" target="_blank">TFRecord template</a> for how I reuse some boilerplate code for this process.</p>
+<p>The specifics of what you need for training/validation/test will determine exactly how you throw this into a loop and continue calling <code class="highlighter-rouge">writer.write(...)</code> on all examples.  See the <a href="https://github.com/crosleythomas/tensorplates/blob/master/templates/prepare_tfrecord.ipynb" target="_blank">TFRecord template</a> for how I reuse some boilerplate code for this process.</p>
+
+<p><span class="example"><b>Running Example: </b>to complete the code (in addition to all code blocks above that say “Inside data/create_tfrecords.py”) for our example, add the following.  This code creates a separate TFRecord file for each object class with a 80/20 split between training and validation data.</span></p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##########################################
+###   Inside data/create_tfrecord.py   ###
+##########################################
+
+# Create train/valid directories to store our TFRecords
+if not os.path.exists('tfrecords') and not os.path.isdir('tfrecords'):
+    os.mkdir('tfrecords')
+
+if not os.path.exists('tfrecords/train') and not os.path.isdir('tfrecords/train'):
+    os.mkdir('tfrecords/train')
+
+if not os.path.exists('tfrecords/valid') and not os.path.isdir('tfrecords/valid'):
+    os.mkdir('tfrecords/valid')
+
+object_names = list(objects.keys())
+# Create a separate TFRecord file for each object category
+for o in object_names:
+    print(o)
+    # Create this object's TFRecord file
+    train_writer = tf.python_io.TFRecordWriter('tfrecords/train/' + o + '.tfrecord')
+    valid_writer = tf.python_io.TFRecordWriter('tfrecords/valid/' + o + '.tfrecord')
+    # Write each image of the object into that file
+    num_images = len(objects[o])
+    for index in range(num_images):
+        i = objects[o][index]
+        # Let's make 80% train and leave 20% for validation
+        if index &lt; num_images * 0.8:
+            writer = train_writer
+        else:
+            writer = valid_writer
+        image = imageio.imread(i)
+        shape = image.shape
+        label = category_labels[o]
+        # Create features dict for this image
+        features = {
+            'height' : int64_feature(shape[0]),
+            'width' : int64_feature(shape[1]),
+            'depth' : int64_feature(shape[2]),
+            'image' : bytes_feature(image.tostring()),
+            'label' : int64_feature(int(label))
+        }
+        # Create Example out of this image and write it to the TFRecord
+        example = tf.train.Example(features=tf.train.Features(feature=features))
+        writer.write(example.SerializeToString())
+    train_writer.close()
+    valid_writer.close()
+</code></pre></div></div>
+
+<p><span class="example"><b>Running Example: </b>the complete create_tfrecords.py file can be found <a href="code/create_tfrecords.py">here</a>.</span></p>
 
 <h3 id="advanced-formatting">Advanced Formatting</h3>
 <p>There are several extensions of this basic process you may want to use when creating your records.</p>
@@ -161,15 +226,15 @@ In Part 3 we will see how to load these TFRecord files and prepare them to be us
 <hr />
 
 <div style="text-align: center;">
-	<button onclick="location.href='introduction'" class="continue-links">Introduction</button>
-	<button onclick="location.href='setup'" class="continue-links">Part 1: Setup</button>
-	<button onclick="location.href='dataprep'" class="continue-links">Part 2: Preparing Data</button>
-	<button onclick="location.href='dataload'" class="continue-links">Part 3: Consuming Data</button>
-	<button onclick="location.href='model'" class="continue-links">Part 4: Defining a Model</button>
-	<button onclick="location.href='traineval'" class="continue-links">Part 5: Training and Evaluating</button>
-	<button onclick="location.href='export'" class="continue-links">Part 6: Exporting, Testing, and Deploying</button>
-	<button onclick="location.href='summary'" class="continue-links">Part 7: All Together Now</button>
-	<button onclick="location.href='references'" class="continue-links">Part 8: Furthur Reading and References</button>
+    <button onclick="location.href='introduction'" class="continue-links">Introduction</button>
+    <button onclick="location.href='setup'" class="continue-links">Part 1: Setup</button>
+    <button onclick="location.href='dataprep'" class="continue-links">Part 2: Preparing Data</button>
+    <button onclick="location.href='dataload'" class="continue-links">Part 3: Consuming Data</button>
+    <button onclick="location.href='model'" class="continue-links">Part 4: Defining a Model</button>
+    <button onclick="location.href='traineval'" class="continue-links">Part 5: Training and Evaluating</button>
+    <button onclick="location.href='export'" class="continue-links">Part 6: Exporting, Testing, and Deploying</button>
+    <button onclick="location.href='summary'" class="continue-links">Part 7: All Together Now</button>
+    <button onclick="location.href='references'" class="continue-links">Part 8: Furthur Reading and References</button>
 </div>
 
 

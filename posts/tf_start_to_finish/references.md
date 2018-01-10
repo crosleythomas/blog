@@ -6,6 +6,15 @@ title: References
 
 # Part 8: References
 
+## Preparing TFRecords
+http://www.machinelearninguru.com/deep_learning/tensorflow/basics/tfrecord/tfrecord.html
+http://warmspringwinds.github.io/tensorflow/tf-slim/2016/12/21/tfrecords-guide/
+
+## Data
+http://www.vision.caltech.edu/Image_Datasets/Caltech101/
+
+## Other
+philkr.net/cs342/
 
 <hr>
 <div style="text-align: center;">

@@ -31,6 +31,18 @@
     <section class="main-content">
       <h1 id="part-6-exporting-testing-and-deploying">Part 6: Exporting, Testing, and Deploying</h1>
 
+<h2 id="exporting">Exporting</h2>
+<p>One of the nice things about using <a href="https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator" target="_blank">Estimator</a> is that it handles the basic export for us.  Estimator saves checkpoints of all learnable weights so we can load them back in later.  The clunkiest part of saving/restoring models in TensorFlow is keeping the graph structure and graph weights (checkpoints) together.</p>
+
+<p>An Estimator can’t be restored from just a checkpoint file (since it does not contain the structure of the model!) so we also need to save the structure.  TensorFlow does save a …, but …  The best way I’ve found to load back in the model for simple test cases or visualization is to import the <code class="highlighter-rouge">model_fn</code> an create an Estimator like we did during training.  This time, however, we pass the <code class="highlighter-rouge">output_dir</code> with the path to our saved checkpoints.</p>
+
+<p>Exporting your model in production adds another level of complexity and is something I haven’t had to do yet.  See <a href="https://www.tensorflow.org/programmers_guide/saved_model#using_savedmodel_with_estimators" target="_blank">here</a> for details on exporting for production or wait for the next update to this blog.</p>
+
+<h2 id="testing">Testing</h2>
+
+<h2 id="deploying">Deploying</h2>
+<p>Deploying a TensorFlow model in production is something I haven’t had to do yet.  Hopefully more on this later but for now you should be able to find good documentation <a href="https://www.tensorflow.org/programmers_guide/saved_model#using_savedmodel_with_estimators" target="_blank">here</a> and <a href="https://www.tensorflow.org/deploy/" target="_blank">here</a>.</p>
+
 <hr />
 
 <h2 id="continue-reading">Continue Reading</h2>

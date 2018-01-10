@@ -38,6 +38,10 @@ Inside ```model.py``` I add one addition function ```load_estimator``` which han
 <span class="protip"><b>Tip: </b>When an Estimator is initialized, it looks in ```model_dir``` and uses the latest saved checkpoint if it exists.  You create a new model by passing ```model_dir=None```.</span>
 
 ```
+################################
+###   Inside code/model.py   ###
+################################
+
 '''
 Constructs and returns a TensorFlow Estimator with the model function and parameters provided.  
 If model_dir is specified and an existing checkpoint exists, the Estimator is initialized from the  
@@ -90,7 +94,7 @@ Implementation:
     Outputs:
         tf.EstimatorSpec that defines the model in different modes.
 '''
-def model(features, labels, mode, params):
+def model_fn(features, labels, mode, params):
     # 1. Define model structure
     
     # ...
@@ -124,37 +128,87 @@ def model(features, labels, mode, params):
 Here is a simple convolutional neural network for our running example:
 
 ```
-##########################################
-###   Inside <project>/code/model.py   ###
-##########################################
+################################
+###   Inside code/model.py   ###
+################################
 
+def model_fn(features, labels, mode, params):
+    # 1. Define model structure
+    for l in range(params.num_layers):
+        lparams = params.layers[l]
+        if l == 0:
+            h = features['image']
+        elif lparams['type'] == 'fc' and len(h.get_shape().as_list()) != 2:
+            h = tf.contrib.layers.flatten(h)
+        if lparams['type'] == 'conv':
+            h = tf.contrib.layers.conv2d(h, lparams['num_outputs'], lparams['kernel_size'], lparams['stride'], activation_fn=lparams['activation'], weights_regularizer=lparams['regularizer'])
+        elif lparams['type'] == 'pool':
+            h = tf.contrib.layers.max_pool2d(h, lparams['kernel_size'], lparams['stride'])
+        elif lparams['type'] == 'fc':
+            h = tf.contrib.layers.fully_connected(h, lparams['num_outputs'], activation_fn=lparams['activation'])
+
+    # 2. Generate predictions
+    if mode == tf.estimator.ModeKeys.PREDICT:
+        predictions = {'output': h}
+        return tf.estimator.EstimatorSpec(mode=mode, predictions=predictions)
+    
+    # 3. Define the loss functions
+    loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=labels, logits=h))
+    
+    # 3.1 Additional metrics for monitoring
+    eval_metric_ops = {"accuracy": tf.metrics.accuracy(
+          labels=labels, predictions=tf.argmax(h, axis=-1))}
+    
+    # 4. Define optimizer
+    optimizer = tf.train.AdamOptimizer(learning_rate=params.learning_rate)
+    train_op = optimizer.minimize(loss=loss, global_step=tf.train.get_global_step())
+    
+    # 5. Return training/evaluation EstimatorSpec
+    return tf.estimator.EstimatorSpec(mode=mode, loss=loss, train_op=train_op, eval_metric_ops=eval_metric_ops)
 ```
 
 ## Setting Additional Parameters
-Before we're done, we need to set a few final variables.
+Before we're done, we need to set a few last variables.
 
 * params: a dictionary of model hyperparameters that is accessible in ```model_fn```
 * config: a tf.estimator.RunConfig object of runtime parameters
-* output_dir: the output directory where Estimator will write summary statistics, training checkpoints, and the graph structure
+* model_dir: the output directory where Estimator will write summary statistics, training checkpoints, and the graph structure
 
 ### params
 You may have noticed in the running example ```model_fn``` several arguments being pulled from the params dictionary.  This is a perfect place to store things like the learning rate for your optimizer, the number of layers in part of your network, the number of units in a layer, etc.
 
 I also like defining ```params``` in ```model.py``` since the parameters are logically connected to the model logic and to keep the main training script clean.
 
-For the running example let's use the following:
+For the running example let's closely follow [AlexNet](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf):
 
 ```
-##########################################
-###   Inside <project>/code/model.py   ###
-##########################################
-params = {
+################################
+###   Inside code/model.py   ###
+################################
+
+params = tf.contrib.training.HParams(
     layers = [
-        {'num_outputs' : 10, 'kernel_size' : 3, 'stride' : 2, 'activation' : tf.nn.relu, 'regularizer' : tf.nn.l2_loss},
+        {'type': 'conv', 'num_outputs' : 96, 'kernel_size' : 11, 'stride' : 4, 'activation' : tf.nn.relu, 'regularizer' : tf.nn.l2_loss}, 
+        {'type': 'pool', 'kernel_size' : 3, 'stride' : 2},
+        {'type': 'conv', 'num_outputs' : 256, 'kernel_size' : 5, 'stride' : 1, 'activation' : tf.nn.relu, 'regularizer' : tf.nn.l2_loss},
+        {'type': 'pool', 'kernel_size' : 3, 'stride' : 2},
+        {'type': 'conv', 'num_outputs' : 384, 'kernel_size' : 3, 'stride' : 1, 'activation' : tf.nn.relu, 'regularizer' : tf.nn.l2_loss},
+        {'type': 'conv', 'num_outputs' : 384, 'kernel_size' : 3, 'stride' : 1, 'activation' : tf.nn.relu, 'regularizer' : tf.nn.l2_loss},
+        {'type': 'conv', 'num_outputs' : 256, 'kernel_size' : 3, 'stride' : 1, 'activation' : tf.nn.relu, 'regularizer' : tf.nn.l2_loss},
+        {'type': 'pool', 'kernel_size' : 3, 'stride' : 2},
+        {'type': 'fc', 'num_outputs' : 4096, 'activation' : tf.nn.relu},
+        {'type': 'fc', 'num_outputs' : 2048, 'activation' : tf.nn.relu},
+        {'type': 'fc', 'num_outputs' : 50, 'activation' : None}
     ],
     learning_rate = 0.001,
-    train_epochs = 30
-}
+    train_epochs = 30,
+    batch_size = 32,
+    image_height = 300,
+    image_width = 200,
+    image_depth = 3
+)
+params.add_hparam('num_layers', len(params.layers))
+
 ```
 
 ### config
@@ -171,7 +225,7 @@ config = tf.estimator.RunConfig(
 )
 ```
 
-### output_dir
+### model_dir
 This one is easy - pick some output directory where you want data related to training this Estimator to be saved.  
 
 For me, these are all in a results directory \<project\>/results/.  Make sure to add ```results/``` to your ```.gitignore```.
@@ -179,37 +233,37 @@ For me, these are all in a results directory \<project\>/results/.  Make sure to
 I simply name the output directory by a timestamp of when the script is run.  You might modify this when testing different versions of a model (\<project\>/results/v1/..., \<project\>/results/v2/..., etc).
 
 ```
-################################################
-###   Inside <project>/code/train_model.py   ###
-################################################
+######################################
+###   Inside code/train_model.py   ###
+######################################
 
 import time, datetime
 
 ts = time.time()
 timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d_%H-%M-%S')
 
-output_dir = '../results/' + timestamp
+model_dir = '../results/' + timestamp
 ```
 
 ## Putting it All Together
 Now that everything we need is defined, we can create the Estimator from the main training script.
 ```
-################################################
-###   Inside <project>/code/train_model.py   ###
-################################################
+######################################
+###   Inside code/train_model.py   ###
+######################################
 
 from model import load_estimator, model_fn, params
 
-estimator = load_estimator(model_fn=model_fn, output_dir=output_dir, config=config, params=params)
+estimator = load_estimator(model_fn=model_fn, model_dir=model_dir, params=params)
 ```
 
 ## Improving Reproducibility
 For better reproducibility I use the following lines to copy over the main training script and the model file that defines the Estimator.  This makes everything much more straight-forward when comparing several slightly varying architectures. Technically you can look up the exact architecture of the model you ran in the <em>Graph</em> tab of TensorBoard, but I'll take the bet you'd rather take a quick peek at the python file you wrote than dig 4 levels into the TensorBoard graph visualization.
 
 ```
-################################################
-###   Inside <project>/code/train_model.py   ###
-################################################
+######################################
+###   Inside code/train_model.py   ###
+######################################
 
 import os, shutil
 
@@ -220,10 +274,10 @@ curr_path = os.path.realpath(__file__)
 model_file = '/some/path/model.py'
 
 # Now copy the training script and the model file to 
-#   output_dir -- the same directory specified when creating the Estimator
+#   model_dir -- the same directory specified when creating the Estimator
 # Note: copy over more files if there are other important dependencies.
-shutil.copy(curr_path, output_dir)
-shutil.copy(model_path, output_dir)
+shutil.copy(curr_path, model_dir)
+shutil.copy(model_path, model_dir)
 
 ```
 
@@ -235,6 +289,8 @@ estimator = load_estimator(...)
 ```
 
 And that's it!  The data is ready, the model is fully defined, and we are ready to start training.
+
+<span class="example"><b>Running Example: </b>here are the complete (up to this point) <a href="code/train_part4.py">train.py file</a> and <a href="code/model.py">model.py file</a>.</span>
 
 <hr>
 ## Continue Reading

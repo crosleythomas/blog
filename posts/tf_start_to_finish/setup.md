@@ -18,8 +18,8 @@ virtualenv env --python=python3
 source env/bin/activate
 
 # Install TensorFlow
-pip3 install tensorflow-gpu # with GPU -- additional setup steps need to be taken for GPU support (coming soon).
-pip3 install tensorflow # without GPU
+pip3 install tensorflow # without GPU -- you probably want to start with this one
+pip3 install tensorflow-gpu # with GPU -- additional setup steps need to be taken for GPU support (coming soon)
 
 # Install Jupyter
 pip3 install jupyter
@@ -38,9 +38,7 @@ jupyter notebook
 
 ## Machine
 
-<span class='tldr'><b>tl;dr: </b>Get yourself an Ubuntu laptop or desktop with an NVIDIA GeForce GTX 1060, 1070, or 1080 GPU right now.</span>
-
-Using the right machine can be the difference between an exciting, but unrecognized idea, and the next hit project.
+Using the right machine can be the difference between an exciting, but unrecognized idea, and the next hit project.  Below are some recommendations for how to get the best setup for developing models in TensorFlow.
 
 #### Software
 There is official support for Mac, Linux, and Windows machines.  However, almost everyone uses either Mac or Linux.  Linux (Ubuntu) is the best choice since you can find a lot of Linux machines for sale with NVIDIA GPUs (the only GPUs that work with TensorFlow).  Mac laptops don't have NVIDIA GPUs but you can technically set up external GPUs.  Also, if you have the money to get a Mac Pro, NVIDIA launched the [NVIDIA TITAN Xp](https://blogs.nvidia.com/blog/2017/04/06/titan-xp/) in May of 2017 that is Mac Pro compatible.
@@ -56,7 +54,7 @@ In general, the following hardware setups are roughly ordered both in their bene
 
 Note that TensorFlow only supports NVIDIA GPUs.
 
-<span class='protip'><b>Pro tip:</b> if buying a decent desktop with a good GPU (NVIDIA GeForce GTX 1060-1080) is close to within your budget, do it now.  You are going to do it eventually and you don't want to give up on machine learning because you got frustrated with your lack of computing power.</span>
+<span class='protip'><b>Tip:</b> if buying a decent desktop with a good GPU (NVIDIA GeForce GTX 1060-1080) is close to within your budget, do it now.  You are going to do it eventually and you don't want to give up on machine learning because you got frustrated with your lack of computing power.</span>
 
 Having some, any, kind of GPU will help every deep learning project you do immensely.  [This benchmarking article](http://hn.premii.com/#/article/15940724) does a really nice job of comparing both the speed and cost of CPUs and different GPUs.  
 
@@ -68,7 +66,7 @@ That's the difference between trying out a new project one night and seeing it w
 Or, for another way of looking at this, enjoy Adam and Jamie from Mythbusters explain the power of GPUs. (Interesting to note this was made in 2009 and sponsored by NVIDIA.)
 
 <div style="text-align: center;">
-	<iframe width="560" height="315" src="https://www.youtube.com/embed/-P28LKWTzrI?rel=0" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen align="center"></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/-P28LKWTzrI?rel=0" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen align="center"></iframe>
 </div>
 
 Hardware is a big topic I've only just gotten interested in recently.  This post is mostly about TensorFlow best practices.  In a future post I will share many more details on what hardware is best and why.
@@ -110,6 +108,10 @@ to
 
 That means you are good to go.  Now, when you pip install something, it will install the new package to this virtual environment.  This may be important if you have different project using different versions of TensorFlow.  One of your old projects may use an environment with TensorFlow Version 1.X for backwards compatibility and TensorFlow Version 1.Y for all the latest features.
 
+<span class="example"><b>Running Example: </b>the best thing about virtual environments is how easy it is to install dependencies.  For the running example I will be doing in this guide you see all the dependencies needed in <a href="data/requirements.txt">this file</a>.  That file is called a <em>requirements</em> file.  It can be generated from a virtualenv with ```pip freeze > requirements.txt ```.  After downloading the file, install all the dependencies by activating your virtualenv and running ```pip install -r requirements.txt```</span>
+
+
+
 ## Installing TensorFlow
 
 
@@ -136,12 +138,14 @@ Coming Soon
 ## Jupyter Notebooks
 If you aren't using [Jupyter Notebooks](http://jupyter.org/) yet, start now.  I put off making the switch for far too long and research has gotten immeasurably more enjoyable since I did.  "The Jupyter Notebook is an open-source web application that allows you to create and share documents that contain live code, equations, visualizations and narrative text." - jupyter.org<br>
 
+For the running example in this post I use python files for simplicity but I almost always use Jupyter Notebooks when prototyping new ideas.
+
 Jupyter is a program you run locally that pops open a tab in your web browser that looks like this...
 ![Jupyter Preview](images/jupyterpreview.png)
 
 It is the perfect environment for prototyping in machine learning and data science.  You can test out snippets of code, visualize images (such as your dataset to make sure you are loading it correctly), run training, etc.
 
-<span class="protip"><b>Pro tip:</b> If you will eventually run the training on a server, prototype using Jupyter and then export the .ipynb notebook file as a .py with File --> Download as --> Python (.py) from inside the notebook.
+<span class="protip"><b>Tip:</b> If you will eventually run the training on a server, prototype using Jupyter and then export the .ipynb notebook file as a .py with File --> Download as --> Python (.py) from inside the notebook.
 </span>
 <br><br>
 ![Exporting Notebook](images/exporting_notebook.png)
@@ -150,22 +154,53 @@ It is the perfect environment for prototyping in machine learning and data scien
 <br><br>
 ![Collaboratory Preview](images/collaboratory.png)
 
+## Creating a New Project
+<span class="example"><b>Running Example: </b>Create a directory with the following structure to follow along with the example project we will create.</span>
+```
+|<project name>
+    |--- code
+        |--- train.py
+        |--- model.py
+        |--- util.py
+    |--- data
+        |--- Caltech50
+        |--- create_tfrecords.py
+```
+
+You can copy the following code into your command line:
+```
+mkdir tf_tutorial
+cd tf_tutorial
+mkdir code
+touch code/train.py
+touch code/model.py
+touch code/util.py
+mkdir data
+touch data/create_tfrecords.py
+```
+
+Download the barebones structure here:
+[Project Structure](data/project_structure.zip)
+
+Or download the complete project here if you just want to follow along:
+[Complete Tutorial](data/complete_project.zip)
+
 <hr>
 ## Continue Reading
 
 <button onclick="location.href='dataprep'" class='continue-links'>Continue to Part 2</button>
-In Part 2 we will see how to prepare a dataset in TensorFlow's TFRecord format.
+Now we're all set up and ready to get start on a real project.  In Part 2 we will see how to prepare a dataset in TensorFlow's TFRecord format.
 
 <hr>
 
 <div style="text-align: center;">
-	<button onclick="location.href='introduction'" class='continue-links'>Introduction</button>
-	<button onclick="location.href='setup'" class='continue-links'>Part 1: Setup</button>
-	<button onclick="location.href='dataprep'" class='continue-links'>Part 2: Preparing Data</button>
-	<button onclick="location.href='dataload'" class='continue-links'>Part 3: Consuming Data</button>
-	<button onclick="location.href='model'" class='continue-links'>Part 4: Defining a Model</button>
-	<button onclick="location.href='traineval'" class='continue-links'>Part 5: Training and Evaluating</button>
-	<button onclick="location.href='export'" class='continue-links'>Part 6: Exporting, Testing, and Deploying</button>
-	<button onclick="location.href='summary'" class='continue-links'>Part 7: All Together Now</button>
-	<button onclick="location.href='references'" class='continue-links'>Part 8: Furthur Reading and References</button>
+    <button onclick="location.href='introduction'" class='continue-links'>Introduction</button>
+    <button onclick="location.href='setup'" class='continue-links'>Part 1: Setup</button>
+    <button onclick="location.href='dataprep'" class='continue-links'>Part 2: Preparing Data</button>
+    <button onclick="location.href='dataload'" class='continue-links'>Part 3: Consuming Data</button>
+    <button onclick="location.href='model'" class='continue-links'>Part 4: Defining a Model</button>
+    <button onclick="location.href='traineval'" class='continue-links'>Part 5: Training and Evaluating</button>
+    <button onclick="location.href='export'" class='continue-links'>Part 6: Exporting, Testing, and Deploying</button>
+    <button onclick="location.href='summary'" class='continue-links'>Part 7: All Together Now</button>
+    <button onclick="location.href='references'" class='continue-links'>Part 8: Furthur Reading and References</button>
 </div>
