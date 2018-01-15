@@ -6,15 +6,26 @@ title: References
 
 # Part 8: References
 
+[TensorFlow Programmers' Guide](https://www.tensorflow.org/programmers_guide/){:target="_blank"}
+
+[TensorFlow 2017 Dev Summit Videos](https://www.youtube.com/watch?v=mWl45NkFBOc&list=PLOU2XLYxmsIKGc_NBoIhTn2Qhraji53cv){:target="_blank"}
+
+[TensorPlates Templates](https://github.com/crosleythomas/tensorplates){:target="_blank"}
+
 ## Preparing TFRecords
-http://www.machinelearninguru.com/deep_learning/tensorflow/basics/tfrecord/tfrecord.html
-http://warmspringwinds.github.io/tensorflow/tf-slim/2016/12/21/tfrecords-guide/
+[Machine Learning Guru TFRecords](http://www.machinelearninguru.com/deep_learning/tensorflow/basics/tfrecord/tfrecord.html){:target="_blank"}
+
+[Daniil's TFRecords Guide](http://warmspringwinds.github.io/tensorflow/tf-slim/2016/12/21/tfrecords-guide/){:target="_blank"}
 
 ## Data
-http://www.vision.caltech.edu/Image_Datasets/Caltech101/
+[Caltech 101 Dataset](http://www.vision.caltech.edu/Image_Datasets/Caltech101/){:target="_blank"}
 
+## Model
+[Creating Custom Estimator](https://www.tensorflow.org/extend/estimators){:target="_blank"}
+## Evaluation
+[TensorBoard: Visualizing Learning](https://www.tensorflow.org/get_started/summaries_and_tensorboard){:target="_blank"}
 ## Other
-philkr.net/cs342/
+I learned a lot about TensorFlow by teaching it as a TA in [Philipp Kr&auml;henb&uuml;hl's](http://www.philkr.net/){:target="_blank"} neural networks class [UT CS 342](philkr.net/cs342/){:target="_blank"}.
 
 <hr>
 <div style="text-align: center;">

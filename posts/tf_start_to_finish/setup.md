@@ -6,6 +6,11 @@ title: Environment Setup
 
 # Part 1: Environment Setup
 
+<div style="text-align: center">
+    <a href="http://hn.premii.com/#/article/15940724" target="_blank">GPU Benchmarking Article</a><br>
+    <a href="https://virtualenv.pypa.io/en/stable/" target="_blank">Virtualenv</a>
+</div>
+
 ## tl;dr
 ```
 # Make sure you have virtualenv

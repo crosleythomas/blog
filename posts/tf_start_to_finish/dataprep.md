@@ -7,7 +7,7 @@ title: Data Preparation
 # Part 2: Preparing Data
 
 <div style="text-align: center">
-    <a href="data/Caltech50.zip">Sample Data</a><br>
+    <a href="data/Caltech50.zip" target="_blank">Sample Data</a><br>
     <a href='https://github.com/crosleythomas/tensorplates/blob/master/templates/prepare_tfrecord.ipynb' target="_blank">Associated Template</a><br>
 </div>
 
