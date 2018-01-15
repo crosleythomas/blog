@@ -8,7 +8,7 @@ title: Data Preparation
 
 <div style="text-align: center">
     <a href="data/Caltech50.zip">Sample Data</a><br>
-    <a href='https://github.com/crosleythomas/tensorplates/blob/master/templates/prepare_tfrecord.ipynb' target="_blank">Accompanying Template</a><br>
+    <a href='https://github.com/crosleythomas/tensorplates/blob/master/templates/prepare_tfrecord.ipynb' target="_blank">Associated Template</a><br>
 </div>
 
 Now that you're all set up, it's time to get your project off the ground.  The first step is getting data ready to be processed by the model you will make.  Preparing your data and defining your model go hand-in-hand so you may have to go back-and-forth between Parts [2](dataprep), [3](dataload), and [4](model) before you see how it all fits together.

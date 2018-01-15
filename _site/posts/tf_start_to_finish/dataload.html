@@ -230,23 +230,30 @@ def parse(record):
         'image': tf.FixedLenFeature([], tf.string),
         'label': tf.FixedLenFeature([], tf.int64)
     }
+
     # Parse the features out of this one record we were passed
     parsed = tf.parse_single_example(record, features)
     # Format the data
     H = tf.cast(parsed['height'], tf.int32)
     W = tf.cast(parsed['width'], tf.int32)
     D = tf.cast(parsed['depth'], tf.int32)
+
     # Decode from the bytes that were written to the TFRecord
     image = tf.decode_raw(parsed["image"], tf.uint8)
+
     # Use the metadata we wrote to reshape as an image
     image = tf.reshape(image, [H, W, D])
+
     # Cast so we can later pass this data to convolutional layers
     image = tf.cast(image, tf.float32)
+
     # Crop/pad such that all images are the same size -- this will be specified in params later
     image = tf.image.resize_image_with_crop_or_pad(image, params.image_height, params.image_width)
+    
     # Tell TensorFlow what the shape is so it doesn't think this is still a dynamic variable
     image.set_shape([params.image_height, params.image_width, params.image_depth])
     label = tf.cast(parsed['label'], tf.int32)
+    
     return {'image': image}, label
 </code></pre></div></div>
 
@@ -257,7 +264,7 @@ def parse(record):
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>from PIL import Image
 
 sess = tf.Session()
-params = tf.contrib.training.HParams(batch_size = 1, image_height = 300, image_width = 200, image_depth = 3)
+params = tf.contrib.training.HParams(batch_size = 1, image_height = 200, image_width = 300, image_depth = 3)
 images, labels = dataset_input_fn('train')
 
 while True:

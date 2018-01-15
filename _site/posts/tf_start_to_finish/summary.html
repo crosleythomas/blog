@@ -31,16 +31,63 @@
     <section class="main-content">
       <h1 id="part-7-summary">Part 7: Summary</h1>
 
-<h2 id="copying-template-directory">Copying Template Directory</h2>
+<p>Now you know how to prepare training data, create a model, train that model, and load it back in for testing.  To get set up as quickly as possible on new projects, I’ve created a full project template in <a href="" target="_blank">TensorPlates</a>.</p>
 
-<h2 id="final-tips">Final Tips</h2>
+<h2 id="creating-a-new-project">Creating a New Project</h2>
+<p>To start a new project simply do the following:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone git@github.com:crosleythomas/tensorplates.git
+cp -r tensorplates/project &lt;your project directory&gt;
+</code></pre></div></div>
+
+<hr />
+
+<p><span class="protip"><b>Tip: </b>After creating a new project you can make your life easier by creating an alias inside your <code class="highlighter-rouge">.bash_profile</code> to activate the associate virtual environment and cd to that directory.  For example, say you have a project called flowers and have created a virtual environment called env inside the project directory.</span></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##################################
+###   Inside ~/.bash_profile   ###
+##################################
+alias flowers='cd ~/Documents/projects/flowers &amp;&amp; source env/bin/activate'
+</code></pre></div></div>
+
+<h2 id="project-implementation-checklist">Project Implementation Checklist</h2>
+
+<p>Now, you can step through completing your project with this checklist:</p>
+<ul>
+  <li><b>Setup</b><br />
+<input type="checkbox" /> Copy project structure<br />
+<input type="checkbox" /> Gather new dataset<br />
+<input type="checkbox" /> Create or activate virtual environment<br /></li>
+  <li><b>Data Preparation</b><br />
+<input type="checkbox" /> Load data<br />
+<input type="checkbox" /> Define output file(s) structure<br />
+<input type="checkbox" /> Define parse_fn<br /></li>
+  <li><b>Data Loading</b><br />
+<input type="checkbox" /> Get paths to TFRecords<br />
+<input type="checkbox" /> Define Dataset’s map parse function<br /></li>
+  <li><b>Model</b><br />
+<input type="checkbox" /> Define any additional <code class="highlighter-rouge">config</code> parameters<br />
+<input type="checkbox" /> Make sure runtime parameters make sense for your current system (i.e. <code class="highlighter-rouge">num_parallel_calls</code> in <code class="highlighter-rouge">dataset.map</code>, <code class="highlighter-rouge">buffer_size</code> in <code class="highlighter-rouge">dataset.shuffle</code> )<br />
+<input type="checkbox" /> Implement model_fn<br />
+<input type="checkbox" /> Define <code class="highlighter-rouge">params</code><br /></li>
+  <li><b>Training</b><br />
+    <ul>
+      <li>Training/Evaluation loop is already defined is the template<br />
+  <input type="checkbox" /> You should only need to define <code class="highlighter-rouge">params.train_epochs</code><br /></li>
+    </ul>
+  </li>
+  <li><b>Evaluation</b><br />
+<input type="checkbox" /> Mount <code class="highlighter-rouge">model_dir</code> if running remotely<br />
+<input type="checkbox" /> Open TensorBoard and Watch<br /></li>
+  <li><b>Deploy</b><br />
+<input type="checkbox" /> This one is completely up to you!<br /></li>
+</ul>
 
 <hr />
 
 <h2 id="continue-reading">Continue Reading</h2>
 
 <p><button onclick="location.href='references'" class="continue-links">Continue to Part 8</button>
-Part 8 cites the tutorials I found most helpful.</p>
+Part 8 cites the tutorials I found most helpful and other resources you may want to use.</p>
 
 <hr />
 

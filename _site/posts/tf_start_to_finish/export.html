@@ -34,14 +34,66 @@
 <h2 id="exporting">Exporting</h2>
 <p>One of the nice things about using <a href="https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator" target="_blank">Estimator</a> is that it handles the basic export for us.  Estimator saves checkpoints of all learnable weights so we can load them back in later.  The clunkiest part of saving/restoring models in TensorFlow is keeping the graph structure and graph weights (checkpoints) together.</p>
 
-<p>An Estimator can’t be restored from just a checkpoint file (since it does not contain the structure of the model!) so we also need to save the structure.  TensorFlow does save a …, but …  The best way I’ve found to load back in the model for simple test cases or visualization is to import the <code class="highlighter-rouge">model_fn</code> an create an Estimator like we did during training.  This time, however, we pass the <code class="highlighter-rouge">output_dir</code> with the path to our saved checkpoints.</p>
+<p>An Estimator can’t be restored from just a checkpoint file (since it does not contain the structure of the model!) so we also need to save the structure.  TensorFlow does save a <code class="highlighter-rouge">graph.pbtxt</code> file with Estimator, but there doesn’t seem to be a way to load the Estimator back in with it.  You still have to define <code class="highlighter-rouge">model_fn</code> when constructing a <code class="highlighter-rouge">tf.estimator.Estimator</code> so we will need to load back in <code class="highlighter-rouge">model.py</code> eventually.</p>
 
-<p>Exporting your model in production adds another level of complexity and is something I haven’t had to do yet.  See <a href="https://www.tensorflow.org/programmers_guide/saved_model#using_savedmodel_with_estimators" target="_blank">here</a> for details on exporting for production or wait for the next update to this blog.</p>
+<p>The best way I’ve found to load back in the model for simple test cases or visualization is to import the <code class="highlighter-rouge">model_fn</code> an create an Estimator like we did during training.  This is why we copied over the <code class="highlighter-rouge">model.py</code> file and now we pass the <code class="highlighter-rouge">output_dir</code> with the path to our saved checkpoints.</p>
+
+<p>Exporting your model in production adds another level of complexity and is something I haven’t had to do yet.  See <a href="https://www.tensorflow.org/programmers_guide/saved_model#using_savedmodel_with_estimators" target="_blank">here</a> for details on exporting for production or wait for the next update to this page.</p>
 
 <h2 id="testing">Testing</h2>
+<p>Your testing might come in all different forms such as:</p>
+<ul>
+  <li>Evaluating on a final test set</li>
+  <li>A visualization that relies on predictions from the model</li>
+  <li>Production web service</li>
+</ul>
+
+<p>Evaluating on a test set is easy.  Once again, just use the <a href="https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator#evaluate" target="_blank">evaluate</a> function the same way we did in the training/validation loop.  This time you just swap out the final testing set.</p>
+
+<p>For a visualization or service that relies on the model you will probably want to use the <a href="https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator#predict" target="_blank">predict</a> function which is also part of estimator.</p>
+
+<p>Predict is one of the modes we specified in the <code class="highlighter-rouge">model_fn</code> of our Estimator.  If you remember, we have the following:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 2. Generate predictions
+if mode == tf.estimator.ModeKeys.PREDICT:
+    predictions = {'output': h}
+    return tf.estimator.EstimatorSpec(mode=mode, predictions=predictions)
+</code></pre></div></div>
+
+<p>When we call the predict function of Estimator, mode will get passed as <code class="highlighter-rouge">tf.estimator.ModeKeys.PREDICT</code> so the predictions are computed and then immediately returned.</p>
+
+<p>The most import thing we need to use <code class="highlighter-rouge">predict</code> is an <code class="highlighter-rouge">input_fn</code>.  For a lot of use cases, such as visualizations, creating a Dataset and Iterator might be overkill and ill-suited if we don’t have prepared data.</p>
+
+<p>Another option is to use <a href="https://www.tensorflow.org/api_docs/python/tf/estimator/inputs/numpy_input_fn">tf.estimator.inputs.numpy_input_fn</a>.  This functions returns <code class="highlighter-rouge">features</code> and <code class="highlighter-rouge">labels</code> like a Dataset Iterator so we can feed them into an Estimator.</p>
+
+<p><span class="example">The code below is one example of construction a simple <code class="highlighter-rouge">input_fn</code> to use with model we have.  You can test the code in a file <code class="highlighter-rouge">test.py</code> in the <code class="highlighter-rouge">model_dir</code> of your saved model.  Also, use <a href="images/test.jpg">this test image</a>.</span></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>######################################
+###   Inside &lt;model_dir&gt;/test.py   ###
+######################################
+
+import tensorflow as tf
+from model import model_fn, params
+
+# Load a sample image
+image = imageio.imread('test.jpg')
+image = image[0:200,0:300,0:3] # a little manual crop
+
+model_dir = ...
+
+# Load the model
+estimator = tf.estimator.Estimator(model_fn, model_dir=model_dir, params=params)
+
+# Create the input_fn
+input_fn = tf.estimator.inputs.numpy_input_fn(x={'image' : image}, num_epochs=1, shuffle=False)
+
+# Predict!
+print(estimator.predict(input_fn=input_fn))
+
+</code></pre></div></div>
 
 <h2 id="deploying">Deploying</h2>
-<p>Deploying a TensorFlow model in production is something I haven’t had to do yet.  Hopefully more on this later but for now you should be able to find good documentation <a href="https://www.tensorflow.org/programmers_guide/saved_model#using_savedmodel_with_estimators" target="_blank">here</a> and <a href="https://www.tensorflow.org/deploy/" target="_blank">here</a>.</p>
+<p>Deploying a TensorFlow model in production is something I haven’t had to do yet.  Hopefully more on this later but for now you should be able to find good documentation in the <a href="https://www.tensorflow.org/programmers_guide/saved_model#using_savedmodel_with_estimators" target="_blank">Programmer’s Guide</a> and under <a href="https://www.tensorflow.org/deploy/" target="_blank">TensorFlow Deploy</a>.</p>
 
 <hr />
 
