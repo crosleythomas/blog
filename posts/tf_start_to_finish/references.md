@@ -20,8 +20,12 @@ title: References
 ## Data
 [Caltech 101 Dataset](http://www.vision.caltech.edu/Image_Datasets/Caltech101/){:target="_blank"}
 
+[TensorFlow Data API Slides](https://docs.google.com/presentation/d/16kHNtQslt-yuJ3w8GIx-eEH6t_AvFeQOchqGRFpAD7U/edit#slide=id.g254d08e080_0_328){:target="_blank"}
+
 ## Model
 [Creating Custom Estimator](https://www.tensorflow.org/extend/estimators){:target="_blank"}
+
+[Peter Roelants' High-Level API Blog Post](https://medium.com/onfido-tech/higher-level-apis-in-tensorflow-67bfb602e6c0){:target="_blank"}
 ## Evaluation
 [TensorBoard: Visualizing Learning](https://www.tensorflow.org/get_started/summaries_and_tensorboard){:target="_blank"}
 ## Other
