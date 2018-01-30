@@ -20,11 +20,11 @@ Let's see how to take data and write it as TFRecord files.
 ## Writing Data to TFRecords
 
 To convert your data to TFRecords, you will follow these steps:
-1. Gather a datapoint (e.g. an image and corresponding label)
+1. Gather all the data (e.g. a list of images and corresponding labels)
 2. Create a [TFRecordWriter](https://www.tensorflow.org/api_docs/python/tf/python_io/TFRecordWriter)
-3. Create an [Example](https://www.tensorflow.org/api_docs/python/tf/train/Example) out of [Features](https://www.tensorflow.org/api_docs/python/tf/train/Feature) constructed from your datapoint
-4. Serialize the [Example](https://www.tensorflow.org/api_docs/python/tf/train/Example)
-5. Write the [Example](https://www.tensorflow.org/api_docs/python/tf/train/Example) to your TFRecord
+3. Create an [Example](https://www.tensorflow.org/api_docs/python/tf/train/Example) out of [Features](https://www.tensorflow.org/api_docs/python/tf/train/Feature) for each datapoint
+4. Serialize the [Examples](https://www.tensorflow.org/api_docs/python/tf/train/Example)
+5. Write the [Examples](https://www.tensorflow.org/api_docs/python/tf/train/Example) to your TFRecord
 
 <span class="example"><b>Running Example: </b> to keep up with the example download <a href="data/Caltech50.zip"> this data</a> and copy/unzip it in your data folder.</span>
 
@@ -38,9 +38,9 @@ import glob, imageio, shutil, os
 ```
 
 ### Gathering Data
-This is the most variable part of the conversion pipeline.  You may have a small batch of image (png/jpeg) files you can load into memory at once, a large dataset you need to load in piece-by-piece, or you may be generating data (i.e. interacting with a simulator) and writing to TFRecords dynamically.
+This is the most variable part of the data conversion pipeline.  You may have a small batch of image (png/jpeg) files you can load into memory at once, a large dataset you need to load in piece-by-piece, or you may be generating data (ex: interacting with a simulator) and writing to TFRecords dynamically.
 
-Let's handle the simple case of loading in a single set of jpeg images.  The data provided is a subset of the [Caltech 101 dataset](http://www.vision.caltech.edu/Image_Datasets/Caltech101/).
+Let's handle the simple case of loading in a single set of jpeg images.  The <a href="data/Caltech50.zip" target="_blank">data provided</a> is a subset of the [Caltech 101 dataset](http://www.vision.caltech.edu/Image_Datasets/Caltech101/).  This data is <em>very</em> small and you should not expect it to be the kind of data needed to train a good deep network.  We are using it to keep the example simple.  Download the data, move it to your ```data``` directory and unzip it.
 
 ```
 ###########################################
@@ -62,11 +62,11 @@ for i in range(len(categories)):
     category_labels[categories[i]] = i
 ```
 
-That was easy enough.  Now we have the file paths for all the images we want to store in our TFRecords and .
+That was easy enough.  Now we have the file paths for all the images we want to store in our TFRecords.
 
 ### Creating TFRecord Writer
 
-The TFRecordWriter is what we will use write each Example once it's been constructed.
+The TFRecordWriter is what we will use to write each Example once it has been constructed.
 
 ```
 # Say we want one of the files to be named 'gerenuk.tfrecord' for one of the categories
@@ -126,7 +126,7 @@ example = tf.train.Example(features=tf.train.Features(feature=features))
 writer.write(example.SerializeToString())
 ```
 
-<span class='warning'><b>Warning: </b>be mindful of the data type of your image before converting it to a feature.  I sometimes find my numpy data getting converted to float64 when we would much rather store it as uint8!  loading a png/jpeg with imageio.imread will return data as uint8.</span>
+<span class='warning'><b>Warning: </b>be mindful of the data type of your image before converting it to a feature.  I sometimes find my numpy data getting converted to float64 when we would much rather store it as uint8!  Loading a png/jpeg with imageio.imread will return data as uint8.</span>
 
 ### Creating a Dataset
 The specifics of what you need for training/validation/test will determine exactly how you throw this into a loop and continue calling ```writer.write(...)``` on all examples.  See the <a href='https://github.com/crosleythomas/tensorplates/blob/master/templates/prepare_tfrecord.ipynb' target='_blank'>TFRecord template</a> for how I reuse some boilerplate code for this process.
@@ -188,10 +188,8 @@ There are several extensions of this basic process you may want to use when crea
 
 * Splitting into train/validation/test records
 * Splitting data into multiple TFRecords to avoid giant files.
-* Loading small chunks of your data at one time
-* Interleaving generating data (e.g. interacting with the OpenAI Gym simulator) and then writing the data to a TFRecord
-
-<span class='protip'><b>Pro tip: </b>The size of the TFRecord files you create should depend on... (memory limits of the computer you will run on?).  You can use the following to determine a good file size: </span>
+* Loading small chunks of your data at a time
+* Interleaving generating data (ex: interacting with the OpenAI Gym simulator) and then writing the data to a TFRecord
 
 <hr>
 ## Continue Reading
@@ -201,6 +199,7 @@ In Part 3 we will see how to load these TFRecord files and prepare them to be us
 
 <hr>
 <div style="text-align: center;">
+    <button onclick="location.href='https://crosleythomas.github.io/blog/'" class='continue-links' target="_blank">Blog</button>
     <button onclick="location.href='introduction'" class='continue-links'>Introduction</button>
     <button onclick="location.href='setup'" class='continue-links'>Part 1: Setup</button>
     <button onclick="location.href='dataprep'" class='continue-links'>Part 2: Preparing Data</button>

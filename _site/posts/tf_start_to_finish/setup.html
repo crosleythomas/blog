@@ -19,7 +19,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="/assets/css/style.css?v=669e447dc45ae7b145a0637cfe5afd821f85855d">
+    <link rel="stylesheet" href="/assets/css/style.css?v=9922c528780159f2c5848e6ab49503406ffe6c8d">
   </head>
   <body>
     <section class="page-header">
@@ -54,16 +54,20 @@ pip3 install tensorflow-gpu # with GPU -- additional setup steps need to be take
 pip3 install jupyter
 
 # Create a project
-mkdir my_new_project
-cd my_new_project
-
-# Start jupyter
-jupyter notebook
-
-# Create a new notebook
-# New (button) --&gt; Python [env]
-
+mkdir tf_tutorial
+cd tf_tutorial
+mkdir code
+touch code/train.py
+touch code/model.py
+touch code/util.py
+mkdir data
+touch data/prepare_tfrecords.py
 </code></pre></div></div>
+
+<div style="text-align: center">
+    <img src="images/tf_structure.png" /><br />
+    <b>High level description of the project code.</b>
+</div>
 
 <h2 id="machine">Machine</h2>
 
@@ -79,7 +83,7 @@ jupyter notebook
   <li><b>Worst:</b> Local CPU Only Machine</li>
   <li>Your Organization’s CPU Only Machines</li>
   <li><b>Recommended:</b> Local CPU+GPU Machine</li>
-  <li>Your Organization’s GPU Only Machines</li>
+  <li>Your Organization’s CPU+GPU Machines</li>
   <li><b>Best:</b> Distributed GPUs on a cloud service (Google Cloud, AWS, Azure)</li>
 </ol>
 
@@ -132,9 +136,9 @@ jupyter notebook
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(env) tcrosley: ...
 </code></pre></div></div>
 
-<p>That means you are good to go.  Now, when you pip install something, it will install the new package to this virtual environment.  This may be important if you have different project using different versions of TensorFlow.  One of your old projects may use an environment with TensorFlow Version 1.X for backwards compatibility and TensorFlow Version 1.Y for all the latest features.</p>
+<p>That means you are good to go.  Now, when you pip install something, it will install the new package to this virtual environment.  This may be important if you have different projects using different versions of TensorFlow.  One of your old projects may use an environment with TensorFlow Version 1.X for backwards compatibility and a newer project may use TensorFlow Version 1.Y for all the latest features.</p>
 
-<p><span class="example"><b>Running Example: </b>the best thing about virtual environments is how easy it is to install dependencies.  For the running example I will be doing in this guide you see all the dependencies needed in <a href="data/requirements.txt">this file</a>.  That file is called a <em>requirements</em> file.  It can be generated from a virtualenv with <code class="highlighter-rouge">pip freeze &gt; requirements.txt</code>.  After downloading the file, install all the dependencies by activating your virtualenv and running <code class="highlighter-rouge">pip install -r requirements.txt</code></span></p>
+<p><span class="example"><b>Running Example: </b>the best thing about virtual environments is how easy it is to install dependencies.  For the running example I will be doing in this guide you see all the dependencies needed in <a href="data/requirements.txt" download="">this file</a>.  That file is called a <em>requirements</em> file.  It can be generated from a virtualenv with <code class="highlighter-rouge">pip freeze &gt; requirements.txt</code>.  After downloading the file, install all the dependencies by activating your virtualenv and running <code class="highlighter-rouge">pip install -r requirements.txt</code></span></p>
 
 <h2 id="installing-tensorflow">Installing TensorFlow</h2>
 
@@ -160,7 +164,7 @@ jupyter notebook
 
 <p>For the running example in this post I use python files for simplicity but I almost always use Jupyter Notebooks when prototyping new ideas.</p>
 
-<p>Jupyter is a program you run locally that pops open a tab in your web browser that looks like this…
+<p>Jupyter is a program you run locally that pops open a tab in your web browser that looks like this (from the Jupyter website)…
 <img src="/posts/tf_start_to_finish/images/jupyterpreview.png" alt="Jupyter Preview" /></p>
 
 <p>It is the perfect environment for prototyping in machine learning and data science.  You can test out snippets of code, visualize images (such as your dataset to make sure you are loading it correctly), run training, etc.</p>
@@ -183,7 +187,7 @@ jupyter notebook
         |--- util.py
     |--- data
         |--- Caltech50
-        |--- create_tfrecords.py
+        |--- prepare_tfrecords.py
 </code></pre></div></div>
 
 <p>You can copy the following code into your command line:</p>
@@ -194,25 +198,26 @@ touch code/train.py
 touch code/model.py
 touch code/util.py
 mkdir data
-touch data/create_tfrecords.py
+touch data/prepare_tfrecords.py
 </code></pre></div></div>
 
 <p>Download the barebones structure here:
-<a href="data/project_structure.zip">Project Structure</a></p>
+<a href="data/tf_tutorial.zip">Project Structure</a></p>
 
 <p>Or download the complete project here if you just want to follow along:
-<a href="data/complete_project.zip">Complete Tutorial</a></p>
+<a href="data/tf_tutorial.zip">Complete Tutorial</a></p>
 
 <hr />
 
 <h2 id="continue-reading">Continue Reading</h2>
 
 <p><button onclick="location.href='dataprep'" class="continue-links">Continue to Part 2</button>
-Now we’re all set up and ready to get start on a real project.  In Part 2 we will see how to prepare a dataset in TensorFlow’s TFRecord format.</p>
+Now we’re all set up and ready to get started on a real project.  In Part 2 we will see how to prepare a dataset in TensorFlow’s TFRecord format.</p>
 
 <hr />
 
 <div style="text-align: center;">
+    <button onclick="location.href='https://crosleythomas.github.io/blog/'" class="continue-links" target="_blank">Blog</button>
     <button onclick="location.href='introduction'" class="continue-links">Introduction</button>
     <button onclick="location.href='setup'" class="continue-links">Part 1: Setup</button>
     <button onclick="location.href='dataprep'" class="continue-links">Part 2: Preparing Data</button>

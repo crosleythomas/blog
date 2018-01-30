@@ -8,7 +8,7 @@ title: Consuming Data
 
 <div style="text-align: center">
     <a href='https://www.tensorflow.org/programmers_guide/datasets' target="_blank">TensorFlow Programmer's Guide - Datasets</a><br>
-    <a href="https://github.com/crosleythomas/tensorplates/blob/master/templates/high_level_api.ipynb" target="_blank">Associated TensorPlates Template</a><br>
+    <a href="https://github.com/crosleythomas/tensorplates/blob/master/templates/train.ipynb" target="_blank">Associated TensorPlates Template</a><br>
 </div>
 
 Great, now we have data formatted as TFRecord files and ready to be ingested by a TensorFlow graph.
@@ -16,7 +16,7 @@ Great, now we have data formatted as TFRecord files and ready to be ingested by 
 To feed data into the compute graph we are making next, we will use the <a href="https://www.tensorflow.org/api_docs/python/tf/data/Dataset" target="_blank">Dataset</a>
  and <a href="https://www.tensorflow.org/api_docs/python/tf/data/Iterator" target="_blank">Iterator</a>
  APIs.  <a href="https://www.tensorflow.org/api_docs/python/tf/data/Dataset" target="_blank">Dataset</a>
- makes creating input pipelines much simpler (loading, shuffling, transforming, etc.) and <a href="https://www.tensorflow.org/api_docs/python/tf/data/Iterator" target="_blank">Iterator</a> handles feeding data from a Dataset into a graph.
+ makes creating input pipelines (loading, shuffling, transforming, etc.) much simpler and <a href="https://www.tensorflow.org/api_docs/python/tf/data/Iterator" target="_blank">Iterator</a> handles feeding data from a Dataset into the computation part of the graph.
 
 When developing a new model, and in the <a href="https://github.com/crosleythomas/tensorplates/blob/master/templates/high_level_api.ipynb" target="_blank">associated template</a> for training a model, I go through the following steps:
 * Gather saved data
@@ -58,7 +58,7 @@ data_files = {'train' : train_files, 'valid' : valid_files}
 ```
 
 ## Creating a dataset_input_fn
-Since we are constrained to using a <a href="https://www.tensorflow.org/api_docs/python/tf/data/Dataset#make_one_shot_iterator" target="_blank">one_shot_iterator</a> with Estimators instead of an <a href="https://www.tensorflow.org/api_docs/python/tf/data/Dataset#make_initializable_iterator" target="_blank">initializable_iterator</a>, which is useful for switching between train, validation, and test, I abstract away the dataset creating one level.  As we will see later, this is useful when switching from training to evaluation.  This function pretty much stays the same across projects.
+Since we are constrained to using a <a href="https://www.tensorflow.org/api_docs/python/tf/data/Dataset#make_one_shot_iterator" target="_blank">one_shot_iterator</a> with Estimators instead of an <a href="https://www.tensorflow.org/api_docs/python/tf/data/Dataset#make_initializable_iterator" target="_blank">initializable_iterator</a>, which is useful for switching between train, validation, and test, I abstract away creating the dataset by one level.  As we will see later, this is useful when switching from training to evaluation.  This function pretty much stays the same across projects.
 
 ```
 ################################
@@ -135,7 +135,7 @@ def load_dataset(mode):
 
 ```
 
-<span class='waiting'><b>Awaiting Explanation: </b>It's not clear to me if the order of the function calls in parse matters, i.e. map, batch, shuffle.  Calling a map function that loads jpeg images from a string to a full image on all, say 10,000, images would certainly be a bad idea.  It might seem like you want to call batch first to get a small batch and then call map.  However, the TensorFlow examples all show map being called right after the Dataset object is first made and I don't see a massive slowdown from overloaded memory if I call map first with images.</span>
+<span class='waiting'><b>Contribution Welcome: </b>It's not clear to me if the order of the function calls in parse matters, i.e. map, batch, shuffle.  Calling a map function that loads jpeg images from a string to a full image on all, say 10,000, images would certainly be a bad idea.  It might seem like you want to call batch first to get a small batch and then call map.  However, the TensorFlow examples all show map being called right after the Dataset object is first made and I don't see a massive slowdown from overloaded memory if I call map first with images.</span>
 
 
 ## Defining the Parse Function
@@ -153,7 +153,7 @@ In general you need to define a function with the following signature:
 
 ```
 '''
-The function that will be call by the map function of a dataset.
+The function that will be called by the map function of a dataset.
 
     Inputs:
         record: a single record from the Dataset.
@@ -182,6 +182,7 @@ def parse(record):
         'feature_1_name': tf.FixedLenFeature([], tf.int64),
         ...
         'feature_N_name': tf.FixedLenFeature([], tf.int64),
+        'label' : tf.FixedLenFeature([], tf.int64)
     }
 
     # Parse the features out of this one record we were passed
@@ -225,7 +226,7 @@ def parse(record):
     image = tf.reshape(image, [H, W, D])
 
     # Cast so we can later pass this data to convolutional layers
-    image = tf.cast(image, tf.float32)
+    image = (tf.cast(image, tf.float32) - 118) / 85 # Pre-computed mean and std
 
     # Crop/pad such that all images are the same size -- this will be specified in params later
     image = tf.image.resize_image_with_crop_or_pad(image, params.image_height, params.image_width)
@@ -268,6 +269,7 @@ In Part 4 we will build a model to use this data!
 
 <hr>
 <div style="text-align: center;">
+    <button onclick="location.href='https://crosleythomas.github.io/blog/'" class='continue-links' target="_blank">Blog</button>
     <button onclick="location.href='introduction'" class='continue-links'>Introduction</button>
     <button onclick="location.href='setup'" class='continue-links'>Part 1: Setup</button>
     <button onclick="location.href='dataprep'" class='continue-links'>Part 2: Preparing Data</button>

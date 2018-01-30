@@ -19,7 +19,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="/assets/css/style.css?v=669e447dc45ae7b145a0637cfe5afd821f85855d">
+    <link rel="stylesheet" href="/assets/css/style.css?v=9922c528780159f2c5848e6ab49503406ffe6c8d">
   </head>
   <body>
     <section class="page-header">
@@ -38,6 +38,8 @@
 
 <p>Now for the part you’ve all been waiting for - defining a model.</p>
 
+<p>Note that this is a very baseline model working with an extremely limited amount of training data so don’t expect to see state of the art results.</p>
+
 <p>To build the model we are going to use one of TensorFlow’s new (as of version 1.1) <a href="https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator" target="_blank">Estimator API</a>.  Estimators accept as arguments the things we do want to handle ourselves:</p>
 <ul>
   <li>a <code class="highlighter-rouge">model_fn</code> that defines the model’s logic</li>
@@ -55,8 +57,8 @@
 <p>To create an Estimator we follow these steps:</p>
 <ol>
   <li>Define the Estimator object</li>
-  <li>Construct the model’s logic in a function model_fn</li>
-  <li>Set parameters such as model_dir, config, and params</li>
+  <li>Construct the model’s logic in a function <code class="highlighter-rouge">model_fn</code></li>
+  <li>Set parameters such as <code class="highlighter-rouge">model_dir</code>, <code class="highlighter-rouge">config</code>, and <code class="highlighter-rouge">params</code></li>
 </ol>
 
 <p><span class="protip"><b>Tip: </b>I like to keep this model code in a separate python file, let’s call it <code class="highlighter-rouge">model.py</code>, that is imported from the main training script.  Since research usually involves trying several architecture variants, separate model files help keep all the subtle differences in order.  Later, we will see how to copy over the exact code that is used for each training run to make completely reproducible results.</span></p>
@@ -64,30 +66,15 @@
 <p>To follow along with the running example, create a new file called <code class="highlighter-rouge">model.py</code>.</p>
 
 <h2 id="defining-the-estimator-object">Defining the Estimator object</h2>
-<p>Inside <code class="highlighter-rouge">model.py</code> I add one addition function <code class="highlighter-rouge">load_estimator</code> which handles both loading a new model (if <code class="highlighter-rouge">model_dir</code> is not speicified) and loads the Estimator’s most recent checkpoint found in <code class="highlighter-rouge">model_dir</code> if it is specified.  This is a nice abstraction to have if you are restarting training or have another script, say a visualization demo, where you want to load the trained model.</p>
+<p>Defining the Estimator object is simple once the <code class="highlighter-rouge">model_fn</code>, <code class="highlighter-rouge">model_dir</code>, <code class="highlighter-rouge">config</code>, and <code class="highlighter-rouge">params</code> are defined - we will do this below.</p>
 
-<p><span class="protip"><b>Tip: </b>When an Estimator is initialized, it looks in <code class="highlighter-rouge">model_dir</code> and uses the latest saved checkpoint if it exists.  You create a new model by passing <code class="highlighter-rouge">model_dir=None</code>.</span></p>
+<p><span class="protip"><b>Tip: </b>When an Estimator is initialized, it looks in <code class="highlighter-rouge">model_dir</code> and uses the latest saved checkpoint if it exists.   If there are no saved checkpoints in <code class="highlighter-rouge">model_dir</code> a new model will be instantiated.  If <code class="highlighter-rouge">model_dir</code> is <code class="highlighter-rouge">None</code> and also not defined in <code class="highlighter-rouge">config</code> a temporary directory will be used.  Re-loading a trained model is as simple as passing in <code class="highlighter-rouge">model_dir</code> as the path to your saved model.  The most confusing thing is how to retreive the <code class="highlighter-rouge">model_fn</code> later on to load back in together.  We will see how to do this below.</span></p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>################################
-###   Inside code/model.py   ###
+###   Inside code/train.py   ###
 ################################
 
-'''
-Constructs and returns a TensorFlow Estimator with the model function and parameters provided.  
-If model_dir is specified and an existing checkpoint exists, the Estimator is initialized from the  
-most recent checkpoint.  Otherwise, a new Estimator is initialized.
-
-    Inputs:
-        model_fn: function handle to function that defines the logic of the model
-        model_dir: output directory where checkpoints and summary statistics will be stored 
-        config: RunConfig object that contains runtime variables 
-            (i.e. random seed, checkpoint frquency, etc.)
-        params: dictionary of hyperparameters that need to be accessible inside model_fn
-    Outputs:
-        TensorFlow Estimator object that encapsulates your model
-'''
-def load_estimator(model_fn=None, model_dir=None, config=None, params=None):
-    return tf.estimator.Estimator(model_fn=model_fn, model_dir=model_dir, config=config, params=params)
+estimator = tf.estimator.Estimator(model_fn=model_fn, model_dir=model_dir, config=config, params=params)
 </code></pre></div></div>
 
 <h2 id="constructing-the-model-function">Constructing the Model Function</h2>
@@ -200,13 +187,13 @@ def model_fn(features, labels, mode, params):
 <p>Before we’re done, we need to set a few last variables.</p>
 
 <ul>
-  <li>params: a dictionary of model hyperparameters that is accessible in <code class="highlighter-rouge">model_fn</code></li>
-  <li>config: a tf.estimator.RunConfig object of runtime parameters</li>
-  <li>model_dir: the output directory where Estimator will write summary statistics, training checkpoints, and the graph structure</li>
+  <li><code class="highlighter-rouge">params</code>: a dictionary of model hyperparameters that is accessible in <code class="highlighter-rouge">model_fn</code></li>
+  <li><code class="highlighter-rouge">config</code>: a tf.estimator.RunConfig object of runtime parameters</li>
+  <li><code class="highlighter-rouge">model_dir</code>: the output directory where Estimator will write summary statistics, training checkpoints, and the graph structure</li>
 </ul>
 
 <h3 id="params">params</h3>
-<p>You may have noticed in the running example <code class="highlighter-rouge">model_fn</code> several arguments being pulled from the params dictionary.  This is a perfect place to store things like the learning rate for your optimizer, the number of layers in part of your network, the number of units in a layer, etc.</p>
+<p>You may have noticed in the running example <code class="highlighter-rouge">model_fn</code> that several arguments being pulled from the <code class="highlighter-rouge">params</code> dictionary.  This is a perfect place to store things like the learning rate for your optimizer, the number of layers in part of your network, the number of units in a layer, etc.</p>
 
 <p>I also like defining <code class="highlighter-rouge">params</code> in <code class="highlighter-rouge">model.py</code> since the parameters are logically connected to the model logic and to keep the main training script clean.</p>
 
@@ -242,11 +229,14 @@ params.add_hparam('num_layers', len(params.layers))
 </code></pre></div></div>
 
 <h3 id="config">config</h3>
-<p>Not to be confused with <code class="highlighter-rouge">params</code>, <code class="highlighter-rouge">config</code> is a <a href="https://www.tensorflow.org/api_docs/python/tf/estimator/RunConfig" target="_blank">tf.estimator.RunConfig</a> object that contains parameters that affect the Estimator while it is running such as <code class="highlighter-rouge">tf_random_seed</code>, <code class="highlighter-rouge">save_summary_steps</code>, <code class="highlighter-rouge">keep_checkpoint_max</code>, etc.  Passing config to the Estimator is optional and mostly something you can avoid unless you need something fairly specific.</p>
+<p>Not to be confused with <code class="highlighter-rouge">params</code>, <code class="highlighter-rouge">config</code> is a <a href="https://www.tensorflow.org/api_docs/python/tf/estimator/RunConfig" target="_blank">tf.estimator.RunConfig</a> object that contains parameters that affect the Estimator while it is running such as <code class="highlighter-rouge">tf_random_seed</code>, <code class="highlighter-rouge">save_summary_steps</code>, <code class="highlighter-rouge">keep_checkpoint_max</code>, etc.  Passing config to the Estimator is optional but particularly helpful for monitoring training progress.</p>
 
-<p>We don’t need this for the running example, but for completeness:</p>
+<p>For the running example let’s use the following to get more frequenet summary statistics written to TensorBoard.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>config = tf.estimator.RunConfig(
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>################################
+###   Inside code/model.py   ###
+################################
+config = tf.estimator.RunConfig(
     tf_random_seed=0,
     save_checkpoints_steps=250,
     save_checkpoints_secs=None,
@@ -262,7 +252,7 @@ params.add_hparam('num_layers', len(params.layers))
 <p>I simply name the output directory by a timestamp of when the script is run.  You might modify this when testing different versions of a model (&lt;project&gt;/results/v1/…, &lt;project&gt;/results/v2/…, etc).</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>######################################
-###   Inside code/train_model.py   ###
+###   Inside code/train.py   ###
 ######################################
 
 import time, datetime
@@ -270,38 +260,33 @@ import time, datetime
 ts = time.time()
 timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d_%H-%M-%S')
 
-model_dir = '../results/' + timestamp
+model_dir_base = '../results/'
+model_dir = model_dir_base + timestamp
 </code></pre></div></div>
 
 <h2 id="putting-it-all-together">Putting it All Together</h2>
-<p>Now that everything we need is defined, we can create the Estimator from the main training script.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>######################################
-###   Inside code/train_model.py   ###
-######################################
-
-from model import load_estimator, model_fn, params
-
-estimator = load_estimator(model_fn=model_fn, model_dir=model_dir, params=params)
-</code></pre></div></div>
+<p>That’s it!  The imports in <code class="highlighter-rouge">train.py</code> will pick up <code class="highlighter-rouge">model_fn</code>, <code class="highlighter-rouge">model_dir</code>, <code class="highlighter-rouge">config</code>, and <code class="highlighter-rouge">params</code> and define the estimator.</p>
 
 <h2 id="improving-reproducibility">Improving Reproducibility</h2>
 <p>For better reproducibility I use the following lines to copy over the main training script and the model file that defines the Estimator.  This makes everything much more straight-forward when comparing several slightly varying architectures. Technically you can look up the exact architecture of the model you ran in the <em>Graph</em> tab of TensorBoard, but I’ll take the bet you’d rather take a quick peek at the python file you wrote than dig 4 levels into the TensorBoard graph visualization.</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>######################################
-###   Inside code/train_model.py   ###
+###   Inside code/train.py   ###
 ######################################
 
 import os, shutil
 
 # Find the path of the current running file (train script)
 curr_path = os.path.realpath(__file__)
-
-# Define the path of your factored out model.py file
-model_file = '/some/path/model.py'
+model_path = curr_path.replace('train.py', 'model.py')
 
 # Now copy the training script and the model file to 
 #   model_dir -- the same directory specified when creating the Estimator
 # Note: copy over more files if there are other important dependencies.
+if not os.path.exists(model_dir_base):
+    os.makedirs(model_dir_base)
+
+os.mkdir(model_dir)
 shutil.copy(curr_path, model_dir)
 shutil.copy(model_path, model_dir)
 
@@ -309,7 +294,7 @@ shutil.copy(model_path, model_dir)
 
 <p><span class="protip"><b>Tip: </b>If you are using Jupyter Notebooks (which you should be!), calling <code class="highlighter-rouge">tf.reset_default_graph()</code> before initializing your model is a good practice.  Doing this avoids creating extra variables and naming confusions.  One of your cells may look like: </span></p>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tf.reset_default_graph()
-estimator = load_estimator(...)
+estimator = tf.estimator.Estimator(...)
 </code></pre></div></div>
 
 <p>And that’s it!  The data is ready, the model is fully defined, and we are ready to start training.</p>
@@ -326,6 +311,7 @@ In Part 5 we will train and evaluate the Estimator.</p>
 <hr />
 
 <div style="text-align: center;">
+    <button onclick="location.href='https://crosleythomas.github.io/blog/'" class="continue-links" target="_blank">Blog</button>
     <button onclick="location.href='introduction'" class="continue-links">Introduction</button>
     <button onclick="location.href='setup'" class="continue-links">Part 1: Setup</button>
     <button onclick="location.href='dataprep'" class="continue-links">Part 2: Preparing Data</button>

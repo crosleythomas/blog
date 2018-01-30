@@ -97,7 +97,7 @@ def parse(record):
     D = tf.cast(parsed['depth'], tf.int32)
     image = tf.decode_raw(parsed["image"], tf.uint8)
     image = tf.reshape(image, [H, W, D])
-    image = tf.cast(image, tf.float32)
+    image = (tf.cast(image, tf.float32) - 118) / 85 # Pre-computed mean and std
     image = tf.image.resize_image_with_crop_or_pad(image, params.image_height, params.image_width)
     label = tf.cast(parsed['label'], tf.int32)
     image.set_shape([params.image_height, params.image_width, params.image_depth])

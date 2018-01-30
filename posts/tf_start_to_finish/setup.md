@@ -30,16 +30,20 @@ pip3 install tensorflow-gpu # with GPU -- additional setup steps need to be take
 pip3 install jupyter
 
 # Create a project
-mkdir my_new_project
-cd my_new_project
-
-# Start jupyter
-jupyter notebook
-
-# Create a new notebook
-# New (button) --> Python [env]
-
+mkdir tf_tutorial
+cd tf_tutorial
+mkdir code
+touch code/train.py
+touch code/model.py
+touch code/util.py
+mkdir data
+touch data/prepare_tfrecords.py
 ```
+
+<div style="text-align: center">
+    <img src='images/tf_structure.png'><br>
+    <b>High level description of the project code.</b>
+</div>
 
 ## Machine
 
@@ -54,7 +58,7 @@ In general, the following hardware setups are roughly ordered both in their bene
 1. <b>Worst:</b> Local CPU Only Machine
 2. Your Organization's CPU Only Machines
 3. <b>Recommended:</b> Local CPU+GPU Machine
-4. Your Organization's GPU Only Machines
+4. Your Organization's CPU+GPU Machines
 5. <b>Best:</b> Distributed GPUs on a cloud service (Google Cloud, AWS, Azure)
 
 Note that TensorFlow only supports NVIDIA GPUs.
@@ -111,9 +115,9 @@ to
 (env) tcrosley: ...
 ```
 
-That means you are good to go.  Now, when you pip install something, it will install the new package to this virtual environment.  This may be important if you have different project using different versions of TensorFlow.  One of your old projects may use an environment with TensorFlow Version 1.X for backwards compatibility and TensorFlow Version 1.Y for all the latest features.
+That means you are good to go.  Now, when you pip install something, it will install the new package to this virtual environment.  This may be important if you have different projects using different versions of TensorFlow.  One of your old projects may use an environment with TensorFlow Version 1.X for backwards compatibility and a newer project may use TensorFlow Version 1.Y for all the latest features.
 
-<span class="example"><b>Running Example: </b>the best thing about virtual environments is how easy it is to install dependencies.  For the running example I will be doing in this guide you see all the dependencies needed in <a href="data/requirements.txt">this file</a>.  That file is called a <em>requirements</em> file.  It can be generated from a virtualenv with ```pip freeze > requirements.txt ```.  After downloading the file, install all the dependencies by activating your virtualenv and running ```pip install -r requirements.txt```</span>
+<span class="example"><b>Running Example: </b>the best thing about virtual environments is how easy it is to install dependencies.  For the running example I will be doing in this guide you see all the dependencies needed in <a href="data/requirements.txt" download>this file</a>.  That file is called a <em>requirements</em> file.  It can be generated from a virtualenv with ```pip freeze > requirements.txt ```.  After downloading the file, install all the dependencies by activating your virtualenv and running ```pip install -r requirements.txt```</span>
 
 
 
@@ -145,7 +149,7 @@ If you aren't using [Jupyter Notebooks](http://jupyter.org/) yet, start now.  I 
 
 For the running example in this post I use python files for simplicity but I almost always use Jupyter Notebooks when prototyping new ideas.
 
-Jupyter is a program you run locally that pops open a tab in your web browser that looks like this...
+Jupyter is a program you run locally that pops open a tab in your web browser that looks like this (from the Jupyter website)...
 ![Jupyter Preview](images/jupyterpreview.png)
 
 It is the perfect environment for prototyping in machine learning and data science.  You can test out snippets of code, visualize images (such as your dataset to make sure you are loading it correctly), run training, etc.
@@ -169,7 +173,7 @@ It is the perfect environment for prototyping in machine learning and data scien
         |--- util.py
     |--- data
         |--- Caltech50
-        |--- create_tfrecords.py
+        |--- prepare_tfrecords.py
 ```
 
 You can copy the following code into your command line:
@@ -181,24 +185,25 @@ touch code/train.py
 touch code/model.py
 touch code/util.py
 mkdir data
-touch data/create_tfrecords.py
+touch data/prepare_tfrecords.py
 ```
 
 Download the barebones structure here:
-[Project Structure](data/project_structure.zip)
+[Project Structure](data/tf_tutorial.zip)
 
 Or download the complete project here if you just want to follow along:
-[Complete Tutorial](data/complete_project.zip)
+[Complete Tutorial](data/tf_tutorial.zip)
 
 <hr>
 ## Continue Reading
 
 <button onclick="location.href='dataprep'" class='continue-links'>Continue to Part 2</button>
-Now we're all set up and ready to get start on a real project.  In Part 2 we will see how to prepare a dataset in TensorFlow's TFRecord format.
+Now we're all set up and ready to get started on a real project.  In Part 2 we will see how to prepare a dataset in TensorFlow's TFRecord format.
 
 <hr>
 
 <div style="text-align: center;">
+    <button onclick="location.href='https://crosleythomas.github.io/blog/'" class='continue-links' target="_blank">Blog</button>
     <button onclick="location.href='introduction'" class='continue-links'>Introduction</button>
     <button onclick="location.href='setup'" class='continue-links'>Part 1: Setup</button>
     <button onclick="location.href='dataprep'" class='continue-links'>Part 2: Preparing Data</button>

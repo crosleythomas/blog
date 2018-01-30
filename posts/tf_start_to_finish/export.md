@@ -11,7 +11,7 @@ One of the nice things about using <a href="https://www.tensorflow.org/api_docs/
 
 An Estimator can't be restored from just a checkpoint file (since it does not contain the structure of the model!) so we also need to save the structure.  TensorFlow does save a ```graph.pbtxt``` file with Estimator, but there doesn't seem to be a way to load the Estimator back in with it.  You still have to define ```model_fn``` when constructing a ```tf.estimator.Estimator``` so we will need to load back in ```model.py``` eventually.  
 
-The best way I've found to load back in the model for simple test cases or visualization is to import the ```model_fn``` an create an Estimator like we did during training.  This is why we copied over the ```model.py``` file and now we pass the ```output_dir``` with the path to our saved checkpoints.
+The best way I've found to load the model back in for simple test cases or visualization is to import the ```model_fn``` and create an Estimator like we did during training.  This is why we copied over the ```model.py``` file and now we pass the ```output_dir``` with the path to our saved checkpoints.
 
 Exporting your model in production adds another level of complexity and is something I haven't had to do yet.  See <a href="https://www.tensorflow.org/programmers_guide/saved_model#using_savedmodel_with_estimators" target="_blank">here</a> for details on exporting for production or wait for the next update to this page.
 
@@ -34,13 +34,13 @@ if mode == tf.estimator.ModeKeys.PREDICT:
     return tf.estimator.EstimatorSpec(mode=mode, predictions=predictions)
 ```
 
-When we call the predict function of Estimator, mode will get passed as ```tf.estimator.ModeKeys.PREDICT``` so the predictions are computed and then immediately returned.
+When we call the ```predict``` function of Estimator, mode will get passed as ```tf.estimator.ModeKeys.PREDICT``` so the predictions are computed and then immediately returned.
 
 The most import thing we need to use ```predict``` is an ```input_fn```.  For a lot of use cases, such as visualizations, creating a Dataset and Iterator might be overkill and ill-suited if we don't have prepared data.
 
-Another option is to use <a href="https://www.tensorflow.org/api_docs/python/tf/estimator/inputs/numpy_input_fn">tf.estimator.inputs.numpy_input_fn</a>.  This functions returns ```features``` and ```labels``` like a Dataset Iterator so we can feed them into an Estimator.
+Another option is to use <a href="https://www.tensorflow.org/api_docs/python/tf/estimator/inputs/numpy_input_fn">tf.estimator.inputs.numpy_input_fn</a>.  This function returns ```features``` and ```labels``` like a Dataset Iterator so we can feed them into an Estimator.
 
-<span class="example">The code below is one example of construction a simple ```input_fn``` to use with model we have.  You can test the code in a file ```test.py``` in the ```model_dir``` of your saved model.  Also, use <a href="images/test.jpg">this test image</a>.</span>
+<span class="example">The code below is one example of construction a simple ```input_fn``` to use with the model we have.  You can test the code in a file ```test.py``` in the ```model_dir``` of your saved model.  Also, use <a href="images/test.jpg" download>this test image</a>.</span>
 
 ```
 ######################################
@@ -78,6 +78,7 @@ Part 7 summarizes all the pieces so far and how to put them all together.
 
 <hr>
 <div style="text-align: center;">
+	<button onclick="location.href='https://crosleythomas.github.io/blog/'" class='continue-links' target="_blank">Blog</button>
     <button onclick="location.href='introduction'" class='continue-links'>Introduction</button>
     <button onclick="location.href='setup'" class='continue-links'>Part 1: Setup</button>
     <button onclick="location.href='dataprep'" class='continue-links'>Part 2: Preparing Data</button>

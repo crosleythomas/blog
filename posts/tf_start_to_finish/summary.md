@@ -6,7 +6,7 @@ title: Summary
 
 # Part 7: Summary
 
-Now you know how to prepare training data, create a model, train that model, and load it back in for testing.  To get set up as quickly as possible on new projects, I've created a full project template in <a href="" target="_blank">TensorPlates</a>.
+Now you know how to prepare training data, create a model, train that model, and load it back in for testing.  To get set up as quickly as possible on new projects, I've created a full project template in <a href="https://github.com/crosleythomas/tensorplates" target="_blank">TensorPlates</a>.
 
 ## Creating a New Project
 To start a new project simply do the following:
@@ -17,7 +17,7 @@ cp -r tensorplates/project <your project directory>
 
 <hr>
 
-<span class="protip"><b>Tip: </b>After creating a new project you can make your life easier by creating an alias inside your ```.bash_profile``` to activate the associate virtual environment and cd to that directory.  For example, say you have a project called flowers and have created a virtual environment called env inside the project directory.</span>
+<span class="protip"><b>Tip: </b>After creating a new project you can make your life easier by creating an alias inside your ```.bash_profile``` to activate the associate virtual environment and cd to that directory.  For example, say you have a project called flowers and have created a virtual environment called ```env``` inside the project directory.</span>
 
 ```
 ##################################
@@ -62,6 +62,7 @@ Part 8 cites the tutorials I found most helpful and other resources you may want
 
 <hr>
 <div style="text-align: center;">
+	<button onclick="location.href='https://crosleythomas.github.io/blog/'" class='continue-links' target="_blank">Blog</button>
     <button onclick="location.href='introduction'" class='continue-links'>Introduction</button>
     <button onclick="location.href='setup'" class='continue-links'>Part 1: Setup</button>
     <button onclick="location.href='dataprep'" class='continue-links'>Part 2: Preparing Data</button>

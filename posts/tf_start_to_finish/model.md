@@ -13,6 +13,8 @@ title: Defining a Model
 
 Now for the part you've all been waiting for - defining a model.
 
+Note that this is a very baseline model working with an extremely limited amount of training data so don't expect to see state of the art results.
+
 To build the model we are going to use one of TensorFlow's new (as of version 1.1) <a href="https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator" target="_blank">Estimator API</a>.  Estimators accept as arguments the things we do want to handle ourselves: 
 * a ```model_fn``` that defines the model's logic
 * a dictionary of hyperparameters that define things like the learning rate, dropout rate, etc.)
@@ -25,39 +27,24 @@ and abstracts away the things that should be automatic:
 
 To create an Estimator we follow these steps:
 1. Define the Estimator object
-2. Construct the model's logic in a function model_fn
-3. Set parameters such as model_dir, config, and params
+2. Construct the model's logic in a function ```model_fn```
+3. Set parameters such as ```model_dir```, ```config```, and ```params```
 
 <span class="protip"><b>Tip: </b>I like to keep this model code in a separate python file, let's call it ```model.py```, that is imported from the main training script.  Since research usually involves trying several architecture variants, separate model files help keep all the subtle differences in order.  Later, we will see how to copy over the exact code that is used for each training run to make completely reproducible results.</span>
 
 To follow along with the running example, create a new file called ```model.py```.
 
 ## Defining the Estimator object
-Inside ```model.py``` I add one addition function ```load_estimator``` which handles both loading a new model (if ```model_dir``` is not speicified) and loads the Estimator's most recent checkpoint found in ```model_dir``` if it is specified.  This is a nice abstraction to have if you are restarting training or have another script, say a visualization demo, where you want to load the trained model.
+Defining the Estimator object is simple once the ```model_fn```, ```model_dir```, ```config```, and ```params``` are defined - we will do this below.
 
-<span class="protip"><b>Tip: </b>When an Estimator is initialized, it looks in ```model_dir``` and uses the latest saved checkpoint if it exists.  You create a new model by passing ```model_dir=None```.</span>
+<span class="protip"><b>Tip: </b>When an Estimator is initialized, it looks in ```model_dir``` and uses the latest saved checkpoint if it exists.   If there are no saved checkpoints in ```model_dir``` a new model will be instantiated.  If ```model_dir``` is ```None``` and also not defined in ```config``` a temporary directory will be used.  Re-loading a trained model is as simple as passing in ```model_dir``` as the path to your saved model.  The most confusing thing is how to retreive the ```model_fn``` later on to load back in together.  We will see how to do this below.</span>
 
 ```
 ################################
-###   Inside code/model.py   ###
+###   Inside code/train.py   ###
 ################################
 
-'''
-Constructs and returns a TensorFlow Estimator with the model function and parameters provided.  
-If model_dir is specified and an existing checkpoint exists, the Estimator is initialized from the  
-most recent checkpoint.  Otherwise, a new Estimator is initialized.
-
-    Inputs:
-        model_fn: function handle to function that defines the logic of the model
-        model_dir: output directory where checkpoints and summary statistics will be stored 
-        config: RunConfig object that contains runtime variables 
-            (i.e. random seed, checkpoint frquency, etc.)
-        params: dictionary of hyperparameters that need to be accessible inside model_fn
-    Outputs:
-        TensorFlow Estimator object that encapsulates your model
-'''
-def load_estimator(model_fn=None, model_dir=None, config=None, params=None):
-    return tf.estimator.Estimator(model_fn=model_fn, model_dir=model_dir, config=config, params=params)
+estimator = tf.estimator.Estimator(model_fn=model_fn, model_dir=model_dir, config=config, params=params)
 ```
 
 ## Constructing the Model Function
@@ -170,12 +157,12 @@ def model_fn(features, labels, mode, params):
 ## Setting Additional Parameters
 Before we're done, we need to set a few last variables.
 
-* params: a dictionary of model hyperparameters that is accessible in ```model_fn```
-* config: a tf.estimator.RunConfig object of runtime parameters
-* model_dir: the output directory where Estimator will write summary statistics, training checkpoints, and the graph structure
+* ```params```: a dictionary of model hyperparameters that is accessible in ```model_fn```
+* ```config```: a tf.estimator.RunConfig object of runtime parameters
+* ```model_dir```: the output directory where Estimator will write summary statistics, training checkpoints, and the graph structure
 
 ### params
-You may have noticed in the running example ```model_fn``` several arguments being pulled from the params dictionary.  This is a perfect place to store things like the learning rate for your optimizer, the number of layers in part of your network, the number of units in a layer, etc.
+You may have noticed in the running example ```model_fn``` that several arguments being pulled from the ```params``` dictionary.  This is a perfect place to store things like the learning rate for your optimizer, the number of layers in part of your network, the number of units in a layer, etc.
 
 I also like defining ```params``` in ```model.py``` since the parameters are logically connected to the model logic and to keep the main training script clean.
 
@@ -212,11 +199,14 @@ params.add_hparam('num_layers', len(params.layers))
 ```
 
 ### config
-Not to be confused with ```params```, ```config``` is a <a href="https://www.tensorflow.org/api_docs/python/tf/estimator/RunConfig" target="_blank">tf.estimator.RunConfig</a> object that contains parameters that affect the Estimator while it is running such as ```tf_random_seed```, ```save_summary_steps```, ```keep_checkpoint_max```, etc.  Passing config to the Estimator is optional and mostly something you can avoid unless you need something fairly specific.
+Not to be confused with ```params```, ```config``` is a <a href="https://www.tensorflow.org/api_docs/python/tf/estimator/RunConfig" target="_blank">tf.estimator.RunConfig</a> object that contains parameters that affect the Estimator while it is running such as ```tf_random_seed```, ```save_summary_steps```, ```keep_checkpoint_max```, etc.  Passing config to the Estimator is optional but particularly helpful for monitoring training progress.
 
-We don't need this for the running example, but for completeness:
+For the running example let's use the following to get more frequenet summary statistics written to TensorBoard.
 
 ```
+################################
+###   Inside code/model.py   ###
+################################
 config = tf.estimator.RunConfig(
     tf_random_seed=0,
     save_checkpoints_steps=250,
@@ -234,7 +224,7 @@ I simply name the output directory by a timestamp of when the script is run.  Yo
 
 ```
 ######################################
-###   Inside code/train_model.py   ###
+###   Inside code/train.py   ###
 ######################################
 
 import time, datetime
@@ -242,40 +232,34 @@ import time, datetime
 ts = time.time()
 timestamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d_%H-%M-%S')
 
-model_dir = '../results/' + timestamp
+model_dir_base = '../results/'
+model_dir = model_dir_base + timestamp
 ```
 
 ## Putting it All Together
-Now that everything we need is defined, we can create the Estimator from the main training script.
-```
-######################################
-###   Inside code/train_model.py   ###
-######################################
-
-from model import load_estimator, model_fn, params
-
-estimator = load_estimator(model_fn=model_fn, model_dir=model_dir, params=params)
-```
+That's it!  The imports in ```train.py``` will pick up ```model_fn```, ```model_dir```, ```config```, and ```params``` and define the estimator.
 
 ## Improving Reproducibility
 For better reproducibility I use the following lines to copy over the main training script and the model file that defines the Estimator.  This makes everything much more straight-forward when comparing several slightly varying architectures. Technically you can look up the exact architecture of the model you ran in the <em>Graph</em> tab of TensorBoard, but I'll take the bet you'd rather take a quick peek at the python file you wrote than dig 4 levels into the TensorBoard graph visualization.
 
 ```
 ######################################
-###   Inside code/train_model.py   ###
+###   Inside code/train.py   ###
 ######################################
 
 import os, shutil
 
 # Find the path of the current running file (train script)
 curr_path = os.path.realpath(__file__)
-
-# Define the path of your factored out model.py file
-model_file = '/some/path/model.py'
+model_path = curr_path.replace('train.py', 'model.py')
 
 # Now copy the training script and the model file to 
 #   model_dir -- the same directory specified when creating the Estimator
 # Note: copy over more files if there are other important dependencies.
+if not os.path.exists(model_dir_base):
+    os.makedirs(model_dir_base)
+
+os.mkdir(model_dir)
 shutil.copy(curr_path, model_dir)
 shutil.copy(model_path, model_dir)
 
@@ -285,7 +269,7 @@ shutil.copy(model_path, model_dir)
 <span class="protip"><b>Tip: </b>If you are using Jupyter Notebooks (which you should be!), calling ```tf.reset_default_graph()``` before initializing your model is a good practice.  Doing this avoids creating extra variables and naming confusions.  One of your cells may look like: </span>
 ```
 tf.reset_default_graph()
-estimator = load_estimator(...)
+estimator = tf.estimator.Estimator(...)
 ```
 
 And that's it!  The data is ready, the model is fully defined, and we are ready to start training.
@@ -300,6 +284,7 @@ In Part 5 we will train and evaluate the Estimator.
 
 <hr>
 <div style="text-align: center;">
+    <button onclick="location.href='https://crosleythomas.github.io/blog/'" class='continue-links' target="_blank">Blog</button>
     <button onclick="location.href='introduction'" class='continue-links'>Introduction</button>
     <button onclick="location.href='setup'" class='continue-links'>Part 1: Setup</button>
     <button onclick="location.href='dataprep'" class='continue-links'>Part 2: Preparing Data</button>

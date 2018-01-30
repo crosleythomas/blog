@@ -1,10 +1,6 @@
 import tensorflow as tf
 import glob, imageio, shutil, os
 
-#############################
-###   Gather Data Files   ###
-#############################
-
 # Gather file paths to all iamges
 data_dir = 'Caltech50'
 object_dirs = glob.glob(data_dir + '/*')
@@ -19,10 +15,6 @@ category_labels = {}
 for i in range(len(categories)):
     category_labels[categories[i]] = i
 
-############################
-###   Helper Functions   ###
-############################
-
 def int64_feature(value):
     return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
 
@@ -31,10 +23,6 @@ def bytes_feature(value):
 
 def float_feature(value):
     return tf.train.Feature(bytes_list=tf.train.FloatList(value=[value]))
-
-###########################
-###   Write TFRecords   ###
-###########################
 
 # Create train/valid directories to store our TFRecords
 if not os.path.exists('tfrecords') and not os.path.isdir('tfrecords'):
@@ -64,6 +52,8 @@ for o in object_names:
             writer = valid_writer
         image = imageio.imread(i)
         shape = image.shape
+        if len(shape) != 3:
+        	continue
         label = category_labels[o]
         # Create features dict for this image
         features = {

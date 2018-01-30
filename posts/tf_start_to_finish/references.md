@@ -31,6 +31,8 @@ title: References
 ## Other
 I learned a lot about TensorFlow by teaching it as a TA in [Philipp Kr&auml;henb&uuml;hl's](http://www.philkr.net/){:target="_blank"} neural networks class [UT CS 342](philkr.net/cs342/){:target="_blank"}.
 
+Many thanks to [Dylan Marshall](https://www.linkedin.com/in/dylan-marshall-09423455/) for his early comments on a draft of this post.
+
 <hr>
 <div style="text-align: center;">
 	<b>Thanks for reading!</b><br>
@@ -40,6 +42,7 @@ I learned a lot about TensorFlow by teaching it as a TA in [Philipp Kr&auml;henb
 <hr>
 
 <div style="text-align: center;">
+	<button onclick="location.href='https://crosleythomas.github.io/blog/'" class='continue-links' target="_blank">Blog</button>
     <button onclick="location.href='introduction'" class='continue-links'>Introduction</button>
     <button onclick="location.href='setup'" class='continue-links'>Part 1: Setup</button>
     <button onclick="location.href='dataprep'" class='continue-links'>Part 2: Preparing Data</button>

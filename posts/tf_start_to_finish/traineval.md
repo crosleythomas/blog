@@ -19,9 +19,9 @@ The hard part is done.  Now, all we have to do is kick off training and use <a h
 To start training and evaluating, simply use the following code.
 
 ```
-######################################
-###   Inside code/train_model.py   ###
-######################################
+################################
+###   Inside code/train.py   ###
+################################
 
 # Training/Evaluation Loop
 for e in range(params.train_epochs):
@@ -36,12 +36,15 @@ Both ```train``` and ```evaluate``` run until ```input_fn``` raises an ```OutOfR
 
 The best way to check in on the training of your model is with <a href="https://www.tensorflow.org/get_started/summaries_and_tensorboard" target="_blank">TensorBoard</a> -- another tool built by Google for visualization of TensorFlow projects.
 
-![TensorBoard](images/tensorboard_edward.png)
+![TensorBoard](images/tensorboard.png)
 
 It used to be a bit of a pain to get TensorBoard working but with Estimator's it's quite easy.  All the metrics we defined in the Part 4 ```model_fn``` are automatically written to TensorBoard.  Now all we have to do is run the TensorBoard program.
 
 <span class="protip"><b>Tip: </b>Right before the training loop I have the following line to make starting TensorBoard one step easier.  Copy/paste what it prints out into a terminal to launch TensorBoard.</span>
 ```
+################################
+###   Inside code/train.py   ###
+################################
 print('tensorboard --logdir=' + str(model_dir))
 ```
 
@@ -52,7 +55,7 @@ To see TensorBoard, open a web browser and go to ```localhost:6000```
 That's it!  Your model is now training, evaluating once at the end of every epoch, and reporting results intermittently to your live updating TensorBoard.
 
 ## Training Remotely, Monitoring Locally
-Often times you will be running your training on a remote server, say you department's or company's cluster.  If you start a training job on a remote instance and still want to use TensorBoard to track training progress live, I recommend using mounting the remote output directory locally with <a href="https://en.wikipedia.org/wiki/SSHFS" target="_blank">SSHFS</a>.  SSHFS gives you a local copy of a remote directory and continually updates the files in that directory as they change.  SSHFS should be installed already if you are using Linux.  If you using a Mac, you probably need to install SSHFS/Fuse <a href="https://osxfuse.github.io/" target="_blank">here</a>.
+Often times you will be running your training on a remote server, say you department's or company's cluster.  If you start a training job on a remote instance and still want to use TensorBoard to track training progress live, I recommend mounting the remote output directory locally with <a href="https://en.wikipedia.org/wiki/SSHFS" target="_blank">SSHFS</a>.  SSHFS gives you a local copy of a remote directory and continually updates the files in that directory as they change.  SSHFS should be installed already if you are using Linux.  If you using a Mac, you probably need to install SSHFS/Fuse <a href="https://osxfuse.github.io/" target="_blank">here</a>.
 
 I have a directory that's only for mounting with SSHFS.
 ```
@@ -77,6 +80,7 @@ In Part 6 we will export and load the model back in with a few different methods
 
 <hr>
 <div style="text-align: center;">
+	<button onclick="location.href='https://crosleythomas.github.io/blog/'" class='continue-links' target="_blank">Blog</button>
     <button onclick="location.href='introduction'" class='continue-links'>Introduction</button>
     <button onclick="location.href='setup'" class='continue-links'>Part 1: Setup</button>
     <button onclick="location.href='dataprep'" class='continue-links'>Part 2: Preparing Data</button>

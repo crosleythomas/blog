@@ -19,7 +19,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="/assets/css/style.css?v=669e447dc45ae7b145a0637cfe5afd821f85855d">
+    <link rel="stylesheet" href="/assets/css/style.css?v=9922c528780159f2c5848e6ab49503406ffe6c8d">
   </head>
   <body>
     <section class="page-header">
@@ -36,7 +36,7 @@
 
 <p>An Estimator can’t be restored from just a checkpoint file (since it does not contain the structure of the model!) so we also need to save the structure.  TensorFlow does save a <code class="highlighter-rouge">graph.pbtxt</code> file with Estimator, but there doesn’t seem to be a way to load the Estimator back in with it.  You still have to define <code class="highlighter-rouge">model_fn</code> when constructing a <code class="highlighter-rouge">tf.estimator.Estimator</code> so we will need to load back in <code class="highlighter-rouge">model.py</code> eventually.</p>
 
-<p>The best way I’ve found to load back in the model for simple test cases or visualization is to import the <code class="highlighter-rouge">model_fn</code> an create an Estimator like we did during training.  This is why we copied over the <code class="highlighter-rouge">model.py</code> file and now we pass the <code class="highlighter-rouge">output_dir</code> with the path to our saved checkpoints.</p>
+<p>The best way I’ve found to load the model back in for simple test cases or visualization is to import the <code class="highlighter-rouge">model_fn</code> and create an Estimator like we did during training.  This is why we copied over the <code class="highlighter-rouge">model.py</code> file and now we pass the <code class="highlighter-rouge">output_dir</code> with the path to our saved checkpoints.</p>
 
 <p>Exporting your model in production adds another level of complexity and is something I haven’t had to do yet.  See <a href="https://www.tensorflow.org/programmers_guide/saved_model#using_savedmodel_with_estimators" target="_blank">here</a> for details on exporting for production or wait for the next update to this page.</p>
 
@@ -60,13 +60,13 @@ if mode == tf.estimator.ModeKeys.PREDICT:
     return tf.estimator.EstimatorSpec(mode=mode, predictions=predictions)
 </code></pre></div></div>
 
-<p>When we call the predict function of Estimator, mode will get passed as <code class="highlighter-rouge">tf.estimator.ModeKeys.PREDICT</code> so the predictions are computed and then immediately returned.</p>
+<p>When we call the <code class="highlighter-rouge">predict</code> function of Estimator, mode will get passed as <code class="highlighter-rouge">tf.estimator.ModeKeys.PREDICT</code> so the predictions are computed and then immediately returned.</p>
 
 <p>The most import thing we need to use <code class="highlighter-rouge">predict</code> is an <code class="highlighter-rouge">input_fn</code>.  For a lot of use cases, such as visualizations, creating a Dataset and Iterator might be overkill and ill-suited if we don’t have prepared data.</p>
 
-<p>Another option is to use <a href="https://www.tensorflow.org/api_docs/python/tf/estimator/inputs/numpy_input_fn">tf.estimator.inputs.numpy_input_fn</a>.  This functions returns <code class="highlighter-rouge">features</code> and <code class="highlighter-rouge">labels</code> like a Dataset Iterator so we can feed them into an Estimator.</p>
+<p>Another option is to use <a href="https://www.tensorflow.org/api_docs/python/tf/estimator/inputs/numpy_input_fn">tf.estimator.inputs.numpy_input_fn</a>.  This function returns <code class="highlighter-rouge">features</code> and <code class="highlighter-rouge">labels</code> like a Dataset Iterator so we can feed them into an Estimator.</p>
 
-<p><span class="example">The code below is one example of construction a simple <code class="highlighter-rouge">input_fn</code> to use with model we have.  You can test the code in a file <code class="highlighter-rouge">test.py</code> in the <code class="highlighter-rouge">model_dir</code> of your saved model.  Also, use <a href="images/test.jpg">this test image</a>.</span></p>
+<p><span class="example">The code below is one example of construction a simple <code class="highlighter-rouge">input_fn</code> to use with the model we have.  You can test the code in a file <code class="highlighter-rouge">test.py</code> in the <code class="highlighter-rouge">model_dir</code> of your saved model.  Also, use <a href="images/test.jpg" download="">this test image</a>.</span></p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>######################################
 ###   Inside &lt;model_dir&gt;/test.py   ###
@@ -105,6 +105,7 @@ Part 7 summarizes all the pieces so far and how to put them all together.</p>
 <hr />
 
 <div style="text-align: center;">
+	<button onclick="location.href='https://crosleythomas.github.io/blog/'" class="continue-links" target="_blank">Blog</button>
     <button onclick="location.href='introduction'" class="continue-links">Introduction</button>
     <button onclick="location.href='setup'" class="continue-links">Part 1: Setup</button>
     <button onclick="location.href='dataprep'" class="continue-links">Part 2: Preparing Data</button>

@@ -19,7 +19,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="/assets/css/style.css?v=669e447dc45ae7b145a0637cfe5afd821f85855d">
+    <link rel="stylesheet" href="/assets/css/style.css?v=9922c528780159f2c5848e6ab49503406ffe6c8d">
   </head>
   <body>
     <section class="page-header">
@@ -46,11 +46,11 @@
 
 <p>To convert your data to TFRecords, you will follow these steps:</p>
 <ol>
-  <li>Gather a datapoint (e.g. an image and corresponding label)</li>
+  <li>Gather all the data (e.g. a list of images and corresponding labels)</li>
   <li>Create a <a href="https://www.tensorflow.org/api_docs/python/tf/python_io/TFRecordWriter">TFRecordWriter</a></li>
-  <li>Create an <a href="https://www.tensorflow.org/api_docs/python/tf/train/Example">Example</a> out of <a href="https://www.tensorflow.org/api_docs/python/tf/train/Feature">Features</a> constructed from your datapoint</li>
-  <li>Serialize the <a href="https://www.tensorflow.org/api_docs/python/tf/train/Example">Example</a></li>
-  <li>Write the <a href="https://www.tensorflow.org/api_docs/python/tf/train/Example">Example</a> to your TFRecord</li>
+  <li>Create an <a href="https://www.tensorflow.org/api_docs/python/tf/train/Example">Example</a> out of <a href="https://www.tensorflow.org/api_docs/python/tf/train/Feature">Features</a> for each datapoint</li>
+  <li>Serialize the <a href="https://www.tensorflow.org/api_docs/python/tf/train/Example">Examples</a></li>
+  <li>Write the <a href="https://www.tensorflow.org/api_docs/python/tf/train/Example">Examples</a> to your TFRecord</li>
 </ol>
 
 <p><span class="example"><b>Running Example: </b> to keep up with the example download <a href="data/Caltech50.zip"> this data</a> and copy/unzip it in your data folder.</span></p>
@@ -64,9 +64,9 @@ import glob, imageio, shutil, os
 </code></pre></div></div>
 
 <h3 id="gathering-data">Gathering Data</h3>
-<p>This is the most variable part of the conversion pipeline.  You may have a small batch of image (png/jpeg) files you can load into memory at once, a large dataset you need to load in piece-by-piece, or you may be generating data (i.e. interacting with a simulator) and writing to TFRecords dynamically.</p>
+<p>This is the most variable part of the data conversion pipeline.  You may have a small batch of image (png/jpeg) files you can load into memory at once, a large dataset you need to load in piece-by-piece, or you may be generating data (ex: interacting with a simulator) and writing to TFRecords dynamically.</p>
 
-<p>Let’s handle the simple case of loading in a single set of jpeg images.  The data provided is a subset of the <a href="http://www.vision.caltech.edu/Image_Datasets/Caltech101/">Caltech 101 dataset</a>.</p>
+<p>Let’s handle the simple case of loading in a single set of jpeg images.  The <a href="data/Caltech50.zip" target="_blank">data provided</a> is a subset of the <a href="http://www.vision.caltech.edu/Image_Datasets/Caltech101/">Caltech 101 dataset</a>.  This data is <em>very</em> small and you should not expect it to be the kind of data needed to train a good deep network.  We are using it to keep the example simple.  Download the data, move it to your <code class="highlighter-rouge">data</code> directory and unzip it.</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>###########################################
 ###   Inside data/create_tfrecords.py   ###
@@ -87,11 +87,11 @@ for i in range(len(categories)):
     category_labels[categories[i]] = i
 </code></pre></div></div>
 
-<p>That was easy enough.  Now we have the file paths for all the images we want to store in our TFRecords and .</p>
+<p>That was easy enough.  Now we have the file paths for all the images we want to store in our TFRecords.</p>
 
 <h3 id="creating-tfrecord-writer">Creating TFRecord Writer</h3>
 
-<p>The TFRecordWriter is what we will use write each Example once it’s been constructed.</p>
+<p>The TFRecordWriter is what we will use to write each Example once it has been constructed.</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Say we want one of the files to be named 'gerenuk.tfrecord' for one of the categories
 tfrecord_filename = 'gerenuk.tfrecord'
@@ -148,7 +148,7 @@ example = tf.train.Example(features=tf.train.Features(feature=features))
 writer.write(example.SerializeToString())
 </code></pre></div></div>
 
-<p><span class="warning"><b>Warning: </b>be mindful of the data type of your image before converting it to a feature.  I sometimes find my numpy data getting converted to float64 when we would much rather store it as uint8!  loading a png/jpeg with imageio.imread will return data as uint8.</span></p>
+<p><span class="warning"><b>Warning: </b>be mindful of the data type of your image before converting it to a feature.  I sometimes find my numpy data getting converted to float64 when we would much rather store it as uint8!  Loading a png/jpeg with imageio.imread will return data as uint8.</span></p>
 
 <h3 id="creating-a-dataset">Creating a Dataset</h3>
 <p>The specifics of what you need for training/validation/test will determine exactly how you throw this into a loop and continue calling <code class="highlighter-rouge">writer.write(...)</code> on all examples.  See the <a href="https://github.com/crosleythomas/tensorplates/blob/master/templates/prepare_tfrecord.ipynb" target="_blank">TFRecord template</a> for how I reuse some boilerplate code for this process.</p>
@@ -210,11 +210,9 @@ for o in object_names:
 <ul>
   <li>Splitting into train/validation/test records</li>
   <li>Splitting data into multiple TFRecords to avoid giant files.</li>
-  <li>Loading small chunks of your data at one time</li>
-  <li>Interleaving generating data (e.g. interacting with the OpenAI Gym simulator) and then writing the data to a TFRecord</li>
+  <li>Loading small chunks of your data at a time</li>
+  <li>Interleaving generating data (ex: interacting with the OpenAI Gym simulator) and then writing the data to a TFRecord</li>
 </ul>
-
-<p><span class="protip"><b>Pro tip: </b>The size of the TFRecord files you create should depend on… (memory limits of the computer you will run on?).  You can use the following to determine a good file size: </span></p>
 
 <hr />
 
@@ -226,6 +224,7 @@ In Part 3 we will see how to load these TFRecord files and prepare them to be us
 <hr />
 
 <div style="text-align: center;">
+    <button onclick="location.href='https://crosleythomas.github.io/blog/'" class="continue-links" target="_blank">Blog</button>
     <button onclick="location.href='introduction'" class="continue-links">Introduction</button>
     <button onclick="location.href='setup'" class="continue-links">Part 1: Setup</button>
     <button onclick="location.href='dataprep'" class="continue-links">Part 2: Preparing Data</button>

@@ -97,7 +97,7 @@ def parse(record):
     D = tf.cast(parsed['depth'], tf.int32)
     image = tf.decode_raw(parsed["image"], tf.uint8)
     image = tf.reshape(image, [H, W, D])
-    image = tf.cast(image, tf.float32)
+    image = (tf.cast(image, tf.float32) - 118) / 85 # Pre-computed mean and std
     image = tf.image.resize_image_with_crop_or_pad(image, params.image_height, params.image_width)
     label = tf.cast(parsed['label'], tf.int32)
     image.set_shape([params.image_height, params.image_width, params.image_depth])
@@ -118,6 +118,26 @@ model_dir = '../results/' + timestamp
 ###    Define Estimator   ###
 #############################
 
-from model import load_estimator, model_fn, params
+from model import model_fn, params, config
 
-estimator = load_estimator(model_fn=model_fn, model_dir=model_dir, params=params)
+estimator = tf.estimator.Estimator(model_fn=model_fn, model_dir=model_dir, config=config, params=params)
+
+##########################
+###   Copy File Over   ###
+##########################
+
+# Find the path of the current running file (train script)
+curr_path = os.path.realpath(__file__)
+model_path = curr_path.replace('train.py', 'model.py')
+
+# Define the path of your factored out model.py file
+model_file = '/some/path/model.py'
+
+# Now copy the training script and the model file to 
+#   model_dir -- the same directory specified when creating the Estimator
+
+# Note: copy over more files if there are other important dependencies.
+os.mkdir(model_dir)
+shutil.copy(curr_path, model_dir)
+shutil.copy(model_path, model_dir)
+

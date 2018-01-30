@@ -19,7 +19,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="/assets/css/style.css?v=669e447dc45ae7b145a0637cfe5afd821f85855d">
+    <link rel="stylesheet" href="/assets/css/style.css?v=9922c528780159f2c5848e6ab49503406ffe6c8d">
   </head>
   <body>
     <section class="page-header">
@@ -33,14 +33,14 @@
 
 <p>Implementation and engineering are becoming increasingly important parts of machine learning as data gets bigger and the competition between researchers and companies heats up.  Being able to quickly iterate on ideas is both necessary to keep up and makes machine learning a lot more fun.</p>
 
-<p>This guide focuses on how to implement projects in <a href="tensorflow.org">TensorFlow</a>.  TensorFlow is Google’s “open-source software library for Machine Intelligence”.</p>
+<p>This guide focuses on how to implement projects in <a href="tensorflow.org">TensorFlow</a>.  This is a mid-to-advanced level guide geared towards researchers working in AI.  If you are looking for a quick introduction for to TensorFlow you may want to look for something simpler.</p>
 
-<p>TensorFlow is a great tool for everyone in machine learning but I often myself</p>
+<p>TensorFlow is Google’s “open-source software library for Machine Intelligence”.  TensorFlow is a great tool for everyone in machine learning but I often myself:</p>
 <ol>
-  <li>Repeating a lot of boiler plate code.</li>
-  <li>Searching for undocumented features and best practices across several blogs.</li>
-  <li>Finding an article for the correct topic but it is already out of date.</li>
-  <li>Not knowing which option to pick when there are several ways of implementing something.</li>
+  <li>Repeating a lot of boiler plate code</li>
+  <li>Searching for undocumented features and best practices across several blogs</li>
+  <li>Finding an article for the correct topic but it is already out of date</li>
+  <li>Not knowing which method to pick when there are several ways of implementing something</li>
 </ol>
 
 <p>Here, I share a start-to-finish guide for taking your project from a messy set of data to a trained production model.  Additionally, I’m planning on updating in place - when one of my practices changes because I improved my approach or TensorFlow has released a new version, I’ll update the guide here.</p>
@@ -65,7 +65,7 @@
 <p>This section covers the train/eval loop with Estimators as well as watching training with <a href="https://www.tensorflow.org/get_started/summaries_and_tensorboard">TensorBoard</a>.  I also share tips on how to do this when training remotely.</p>
 
 <h3 id="-part-6--exporting-testing-and-deploying">* <a href="export">Part 6 – Exporting, Testing, and Deploying</a></h3>
-<p>Exporting your trained model, testing on held-out data, and deploying that model for a service.</p>
+<p>Exporting your trained model, testing on held-out data, and deploying that model as a service.</p>
 
 <h3 id="-part-7--all-together-now">* <a href="summary">Part 7 – All Together Now</a></h3>
 <p>Now that you understand every step of the process, let’s review and show how to put them all together quickly using templates that handle most of the boiler plate code.</p>
@@ -76,6 +76,7 @@
 <hr />
 
 <div style="text-align: center;">
+    <button onclick="location.href='https://crosleythomas.github.io/blog/'" class="continue-links" target="_blank">Blog</button>
     <button onclick="location.href='introduction'" class="continue-links">Introduction</button>
     <button onclick="location.href='setup'" class="continue-links">Part 1: Setup</button>
     <button onclick="location.href='dataprep'" class="continue-links">Part 2: Preparing Data</button>

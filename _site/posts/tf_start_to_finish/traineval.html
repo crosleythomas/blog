@@ -19,7 +19,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="/assets/css/style.css?v=669e447dc45ae7b145a0637cfe5afd821f85855d">
+    <link rel="stylesheet" href="/assets/css/style.css?v=9922c528780159f2c5848e6ab49503406ffe6c8d">
   </head>
   <body>
     <section class="page-header">
@@ -43,9 +43,9 @@
 
 <p>To start training and evaluating, simply use the following code.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>######################################
-###   Inside code/train_model.py   ###
-######################################
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>################################
+###   Inside code/train.py   ###
+################################
 
 # Training/Evaluation Loop
 for e in range(params.train_epochs):
@@ -60,12 +60,15 @@ for e in range(params.train_epochs):
 
 <p>The best way to check in on the training of your model is with <a href="https://www.tensorflow.org/get_started/summaries_and_tensorboard" target="_blank">TensorBoard</a> – another tool built by Google for visualization of TensorFlow projects.</p>
 
-<p><img src="/posts/tf_start_to_finish/images/tensorboard_edward.png" alt="TensorBoard" /></p>
+<p><img src="images/tensorboard.png" alt="TensorBoard" /></p>
 
 <p>It used to be a bit of a pain to get TensorBoard working but with Estimator’s it’s quite easy.  All the metrics we defined in the Part 4 <code class="highlighter-rouge">model_fn</code> are automatically written to TensorBoard.  Now all we have to do is run the TensorBoard program.</p>
 
 <p><span class="protip"><b>Tip: </b>Right before the training loop I have the following line to make starting TensorBoard one step easier.  Copy/paste what it prints out into a terminal to launch TensorBoard.</span></p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>print('tensorboard --logdir=' + str(model_dir))
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>################################
+###   Inside code/train.py   ###
+################################
+print('tensorboard --logdir=' + str(model_dir))
 </code></pre></div></div>
 
 <p>To see TensorBoard, open a web browser and go to <code class="highlighter-rouge">localhost:6000</code></p>
@@ -75,7 +78,7 @@ for e in range(params.train_epochs):
 <p>That’s it!  Your model is now training, evaluating once at the end of every epoch, and reporting results intermittently to your live updating TensorBoard.</p>
 
 <h2 id="training-remotely-monitoring-locally">Training Remotely, Monitoring Locally</h2>
-<p>Often times you will be running your training on a remote server, say you department’s or company’s cluster.  If you start a training job on a remote instance and still want to use TensorBoard to track training progress live, I recommend using mounting the remote output directory locally with <a href="https://en.wikipedia.org/wiki/SSHFS" target="_blank">SSHFS</a>.  SSHFS gives you a local copy of a remote directory and continually updates the files in that directory as they change.  SSHFS should be installed already if you are using Linux.  If you using a Mac, you probably need to install SSHFS/Fuse <a href="https://osxfuse.github.io/" target="_blank">here</a>.</p>
+<p>Often times you will be running your training on a remote server, say you department’s or company’s cluster.  If you start a training job on a remote instance and still want to use TensorBoard to track training progress live, I recommend mounting the remote output directory locally with <a href="https://en.wikipedia.org/wiki/SSHFS" target="_blank">SSHFS</a>.  SSHFS gives you a local copy of a remote directory and continually updates the files in that directory as they change.  SSHFS should be installed already if you are using Linux.  If you using a Mac, you probably need to install SSHFS/Fuse <a href="https://osxfuse.github.io/" target="_blank">here</a>.</p>
 
 <p>I have a directory that’s only for mounting with SSHFS.</p>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkdir ~/mnt
@@ -100,6 +103,7 @@ In Part 6 we will export and load the model back in with a few different methods
 <hr />
 
 <div style="text-align: center;">
+	<button onclick="location.href='https://crosleythomas.github.io/blog/'" class="continue-links" target="_blank">Blog</button>
     <button onclick="location.href='introduction'" class="continue-links">Introduction</button>
     <button onclick="location.href='setup'" class="continue-links">Part 1: Setup</button>
     <button onclick="location.href='dataprep'" class="continue-links">Part 2: Preparing Data</button>

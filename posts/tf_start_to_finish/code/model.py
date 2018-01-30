@@ -1,22 +1,5 @@
 import tensorflow as tf
 
-'''
-Constructs and returns a TensorFlow Estimator with the model function and parameters provided.  
-If model_dir is specified and an existing checkpoint exists, the Estimator is initialized from the  
-most recent checkpoint.  Otherwise, a new Estimator is initialized.
-
-    Inputs:
-        model_fn: function handle to function that defines the logic of the model
-        model_dir: output directory where checkpoints and summary statistics will be stored 
-        config: RunConfig object that contains runtime variables 
-            (i.e. random seed, checkpoint frquency, etc.)
-        params: dictionary of hyperparameters that need to be accessible inside model_fn
-    Outputs:
-        TensorFlow Estimator object that encapsulates your model
-'''
-def load_estimator(model_fn=None, model_dir=None, config=None, params=None):
-    return tf.estimator.Estimator(model_fn=model_fn, model_dir=model_dir, config=config, params=params)
-
 ########################
 ###   Define model   ###
 ########################
@@ -81,3 +64,11 @@ params = tf.contrib.training.HParams(
     image_depth = 3
 )
 params.add_hparam('num_layers', len(params.layers))
+
+# Run Configuration
+config = tf.contrib.learn.RunConfig(
+    tf_random_seed=0,
+    save_checkpoints_steps=250,
+    save_checkpoints_secs=None,
+    save_summary_steps=10,
+)
